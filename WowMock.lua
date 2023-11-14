@@ -1,4 +1,4 @@
-local WowMock = {}
+WowMock = {}
 
 -- Mocks for libraries used by the plug-in
 MockIconLib = {}
@@ -31,6 +31,66 @@ function date()
     local d = {}
     return d
 end
+
+function getglobal(name)
+    return _G[name]
+end
+
+
+-- WowMock object
+function WowMock:Init()
+    self.inCombat = false
+    self.knownItems = {}
+    self.knownSpells = {}
+    self.knownToys = {}
+    self.time = 0
+    self.loaded = true
+    self.currentMap = 0
+    self.grouped = false
+
+    self.itemTypes = {}
+    self.itemSubTypes = {}
+    self.itemEquipLoc = {}
+    self.itemCounts = {}
+
+    self.completedQuests = {}
+
+    self.frames = {}
+end
+
+function WowMock:SetInCombat(b)
+    self.InCombat = b
+end
+
+function WowMock:SetLoaded(b)
+    self.loaded = b;
+end
+
+function WowMock:AddSpell(spellId)
+    self.knownSpells[spellId] = true
+end
+
+function WowMock:AddItem(itemId)
+    self.knownItems[itemId] = true
+    if self.itemCounts[itemId] then 
+        self.itemCounts[itemId] = self.itemCounts[itemId] + 1
+    else
+        self.itemCounts[itemId] = 0
+    end
+end
+
+function WowMock:FindFramesWithTemplate(template)
+    local r = {}
+    for index, frame in ipairs(self.frames) do
+        if frame.template == template then
+            tinsert(r, frame)
+        end
+    end
+    return r
+end
+
+
+WowMock:Init()
 
 -- Versioning
 
@@ -77,7 +137,6 @@ function UnitClass()
 end
 
 -- Frame
-local Frames = {}
 Frame = {}
 UISpecialFrames = {}
 
@@ -105,7 +164,7 @@ function Frame:SetAllPoints(other)
 end
 
 function Frame:GetName()
-    return name
+    return self.name
 end
 
 function Frame:CreateTexture()
@@ -170,6 +229,18 @@ function Frame:SetBackdropColor(r, g, b, a)
     self.backgroundA = a
 end
 
+function Frame:RegisterForClicks()
+end
+
+function Frame:SetAttribute()
+end
+
+function Frame:SetJustifyH()
+end
+
+function Frame:SetJustifyV()
+end
+
 function CreateFrame(frameType, name, parent, template, id)
     local frame = {}
     frame.frameType = frameType
@@ -185,20 +256,34 @@ function CreateFrame(frameType, name, parent, template, id)
     frame.parent = parent
     frame.id = id
     frame.points = {}
+    frame.template = template
+
+    if not frame.Construct then print(template) end
 
     frame:Construct()
 
-    tinsert(Frames, frame)
+    tinsert(WowMock.frames, frame)
 
     return frame
 end
 
 CreateFrame("Frame", "UIParent")
-CreateFrame("FontString", "GameFontNormalSmall")
+CreateFrame("FontString", "FontString")
+CreateFrame("FontString", "GameFontNormalSmall", nil, "FontString")
 CreateFrame("Button", "UIPanelButtonTemplate")
+CreateFrame("Button", "InsecureActionButtonTemplate")
+CreateFrame("Frame", "BackdropTemplate")
 
 function UIPanelButtonTemplate:Construct()
     self:CreateFontString(self.name.."Text", nil, "GameFontNormalSmall")
+end
+
+function GameFontNormalSmall:GetStringWidth()
+    if self.text then
+        return string.len(self.text) * 8
+    else   
+        return 0
+    end
 end
 
 -- Items
@@ -227,38 +312,12 @@ function IsSpellKnown(spellId)
     return WowMock.knownSpells[spellId] or false
 end
 
+function GetSpellCooldown(spellId)
+    return 0
+end
+
 -- Quests
 C_QuestLog = {}
 function C_QuestLog:IsQuestFlaggedCompleted(questId)
     return WowMock.completedQuests[questId] or false
 end
-
--- WowMock object
-function WowMock:Init()
-    self.inCombat = false
-    self.knownItems = {}
-    self.knownSpells = {}
-    self.knownToys = {}
-    self.time = 0
-    self.loaded = true
-    self.currentMap = 0
-    self.grouped = false
-
-    self.itemTypes = {}
-    self.itemSubTypes = {}
-    self.itemEquipLoc = {}
-    self.itemCounts = {}
-
-    self.completedQuests = {}
-end
-
-function WowMock:SetInCombat(b)
-    self.InCombat = b
-end
-
-function WowMock:SetLoaded(b)
-    self.loaded = b;
-end
-
-
-WowMock:Init()
