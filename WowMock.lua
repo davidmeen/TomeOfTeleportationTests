@@ -75,7 +75,7 @@ function WowMock:AddItem(itemId)
     if self.itemCounts[itemId] then 
         self.itemCounts[itemId] = self.itemCounts[itemId] + 1
     else
-        self.itemCounts[itemId] = 0
+        self.itemCounts[itemId] = 1
     end
 end
 
@@ -83,6 +83,16 @@ function WowMock:FindFramesWithTemplate(template)
     local r = {}
     for index, frame in ipairs(self.frames) do
         if frame.template == template then
+            tinsert(r, frame)
+        end
+    end
+    return r
+end
+
+function WowMock:FindFramesWithPrefix(prefix)
+    local r = {}
+    for index, frame in ipairs(self.frames) do
+        if frame.name and string.find(frame.name, prefix) then
             tinsert(r, frame)
         end
     end
@@ -320,4 +330,15 @@ end
 C_QuestLog = {}
 function C_QuestLog:IsQuestFlaggedCompleted(questId)
     return WowMock.completedQuests[questId] or false
+end
+
+-- Container
+C_Container = {}
+
+function C_Container:GetItemCooldown(itemId)
+    return 0
+end
+
+function IsEquippableItem(itemId)
+    return false
 end

@@ -13,15 +13,11 @@ Spell_TeleportOrgrimmar = 3567
 
 Fixture = {}
 
-function Fixture:RunTest()
+function Fixture:BeforeTest()
     CreateFrame("Frame", "TeleporterFrame")
     Teleporter_OnAddonLoaded()
 
     TeleporterClose()
-
-    self.test(self)
-
-    return self.result
 end
 
 function Fixture:TestEquals(v1, v2, text)
@@ -39,14 +35,51 @@ function CreateFixture(name)
     return f
 end
 
-local function FindButtons()
+local function FindButtons()    
     return WowMock:FindFramesWithTemplate("InsecureActionButtonTemplate")
 end
 
-local Fixture f = CreateFixture("OneSpellKnown_OpenFrame_OneButtonDisplayed")
-f.test = function(f)
-    WowMock:AddSpell(Spell_TeleportOrgrimmar)
-    TeleporterOpenFrame()
-    f:TestEquals(#FindButtons(), 1, "There should be 1 button")
+local function FindZoneLabels()
+    return WowMock:FindFramesWithPrefix("TeleporterDL")
 end
-print(f:RunTest())
+
+local Tests = 
+{    
+    ["OneSpellKnown_OpenFrame_OneZoneLabelAndOneButtonDisplayed"] = function(f)
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)
+        TeleporterOpenFrame()
+        f:TestEquals(#FindButtons(), 1, "There should be 1 button")
+        f:TestEquals(#FindZoneLabels(), 1, "There should be 1 zone label")
+    end,
+    ["TwoSpellsKnown_OpenFrame_TwoZoneLabelsAndTwoButtonDisplayed"] = function(f)
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)
+        WowMock:AddSpell(Spell_AstralRecall)
+        TeleporterOpenFrame()
+        f:TestEquals(#FindButtons(), 2, "There should be 2 buttons")
+        f:TestEquals(#FindZoneLabels(), 2, "There should be 2 zone labels")
+    end,
+    ["OneItemOwned_OpenFrame_OneZoneLabelAndOneButtonDisplayed"] = function(f)
+        WowMock:AddItem(Item_Hearthstone)
+        TeleporterOpenFrame()
+        f:TestEquals(#FindButtons(), 1, "There should be 1 button")
+        f:TestEquals(#FindZoneLabels(), 1, "There should be 1 zone label")
+    end,   
+}
+
+local numSucceeded = 0
+local numFailed = 0
+
+for name, testFunction in pairs(Tests) do
+    WowMock:Init()
+    local Fixture f = CreateFixture(name)
+
+    f:BeforeTest()
+    testFunction(f)
+    if f.result then
+        numSucceeded = numSucceeded + 1
+    else
+        numFailed = numFailed + 1
+    end
+end
+
+print(numSucceeded .. " succeeded, " .. numFailed .. " failed.")
