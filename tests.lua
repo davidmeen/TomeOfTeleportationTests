@@ -5,26 +5,38 @@ dofile(AddonFolder .. "Spells.lua")
 
 
 Item_Hearthstone = 6948
+Item_Atiesh = 22589
+Item_ScrollOfTownPortal = 142543
 
 Toy_TomeOfTownPortal = 142542
 
 Spell_AstralRecall = 556
 Spell_TeleportOrgrimmar = 3567
 
+
 Fixture = {}
 
 function Fixture:BeforeTest()
     CreateFrame("Frame", "TeleporterFrame")
     Teleporter_OnAddonLoaded()
+    WowMock:SetOnUpdate(Teleporter_OnUpdate)
 
     TeleporterClose()
 end
 
 function Fixture:TestEquals(v1, v2, text)
     if v1 ~= v2 then
-        print(self.name .. " " .. text .. " failed. " .. (v1 or "nil") .. " does not equal " .. (v2 or "nil") .. ".")
+        print(self.name .. " \"" .. text .. "\" failed. " .. tostring(v1) .. " does not equal " .. tostring(v2) .. ".")
         self.result = false
     end
+end
+
+function Fixture:FindButtons()    
+    return WowMock:FindFramesWithTemplate("InsecureActionButtonTemplate")
+end
+
+function Fixture:FindZoneLabels()
+    return WowMock:FindFramesWithPrefix("TeleporterDL")
 end
 
 function CreateFixture(name)
@@ -35,36 +47,20 @@ function CreateFixture(name)
     return f
 end
 
-local function FindButtons()    
-    return WowMock:FindFramesWithTemplate("InsecureActionButtonTemplate")
+
+local Tests = {}
+
+function AddTests(tests)
+    for name, func in pairs(tests) do
+        if Tests[name] then
+            print("Duplicate test name " .. name)
+        end
+        Tests[name] = func
+    end
 end
 
-local function FindZoneLabels()
-    return WowMock:FindFramesWithPrefix("TeleporterDL")
-end
-
-local Tests = 
-{    
-    ["OneSpellKnown_OpenFrame_OneZoneLabelAndOneButtonDisplayed"] = function(f)
-        WowMock:AddSpell(Spell_TeleportOrgrimmar)
-        TeleporterOpenFrame()
-        f:TestEquals(#FindButtons(), 1, "There should be 1 button")
-        f:TestEquals(#FindZoneLabels(), 1, "There should be 1 zone label")
-    end,
-    ["TwoSpellsKnown_OpenFrame_TwoZoneLabelsAndTwoButtonDisplayed"] = function(f)
-        WowMock:AddSpell(Spell_TeleportOrgrimmar)
-        WowMock:AddSpell(Spell_AstralRecall)
-        TeleporterOpenFrame()
-        f:TestEquals(#FindButtons(), 2, "There should be 2 buttons")
-        f:TestEquals(#FindZoneLabels(), 2, "There should be 2 zone labels")
-    end,
-    ["OneItemOwned_OpenFrame_OneZoneLabelAndOneButtonDisplayed"] = function(f)
-        WowMock:AddItem(Item_Hearthstone)
-        TeleporterOpenFrame()
-        f:TestEquals(#FindButtons(), 1, "There should be 1 button")
-        f:TestEquals(#FindZoneLabels(), 1, "There should be 1 zone label")
-    end,   
-}
+dofile("layouttests.lua")
+dofile("interactiontests.lua")
 
 local numSucceeded = 0
 local numFailed = 0

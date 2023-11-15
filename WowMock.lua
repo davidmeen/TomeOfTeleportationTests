@@ -43,7 +43,7 @@ function WowMock:Init()
     self.knownItems = {}
     self.knownSpells = {}
     self.knownToys = {}
-    self.time = 0
+    self.time = 100000
     self.loaded = true
     self.currentMap = 0
     self.grouped = false
@@ -52,6 +52,10 @@ function WowMock:Init()
     self.itemSubTypes = {}
     self.itemEquipLoc = {}
     self.itemCounts = {}
+    self.itemCooldowns = {}
+    self.itemsSlots = {}
+
+    self.spellCooldowns = {}
 
     self.completedQuests = {}
 
@@ -79,6 +83,15 @@ function WowMock:AddItem(itemId)
     end
 end
 
+function WowMock:GetItemIdFromName(itemName)
+    -- Names are always itemN
+    return tonumber(string.sub(itemName, 5)) or itemName
+end
+
+function WowMock:AddToy(spellId)
+    self.knownToys[spellId] = true
+end
+
 function WowMock:FindFramesWithTemplate(template)
     local r = {}
     for index, frame in ipairs(self.frames) do
@@ -99,6 +112,69 @@ function WowMock:FindFramesWithPrefix(prefix)
     return r
 end
 
+function WowMock:SetItemCooldown(item, start, duration)
+    self.itemCooldowns[item] = { start, duration };
+end
+
+function WowMock:SetSpellCooldown(spell, start, duration)
+    self.spellCooldowns[spell] = { start, duration };
+end
+
+function WowMock:SetTime(time)
+    self.time = time
+end
+
+function WowMock:SetOnUpdate(onUpdate)
+    self.onUpdate = onUpdate
+end
+
+function WowMock:Tick(dt)
+    self.time = self.time + dt
+    if (self.onUpdate) then
+        self.onUpdate()
+    end
+end
+
+local InvTypeToSlot = 
+{	
+	["INVTYPE_HEAD"] = 1,
+	["INVTYPE_NECK"] = 2,
+	["INVTYPE_SHOULDER"] = 3,
+	["INVTYPE_BODY"] = 4,
+	["INVTYPE_CHEST"] = 5,
+	["INVTYPE_ROBE"] = 5,
+	["INVTYPE_WAIST"] = 6,
+	["INVTYPE_LEGS"] = 7,
+	["INVTYPE_FEET"] = 8,
+	["INVTYPE_WRIST"] = 9,
+	["INVTYPE_HAND"] = 10,
+	["INVTYPE_FINGER"] = 11,
+	["INVTYPE_TRINKET"] = 13,
+	["INVTYPE_CLOAK"] = 15,
+	["INVTYPE_2HWEAPON"] = 16,
+	["INVTYPE_WEAPONMAINHAND"] = 16,
+    ["INVTYPE_HOLDABLE"] = 17,
+    ["INVTYPE_SHIELD"] = 17,
+	["INVTYPE_TABARD"] = 19
+}
+
+function WowMock:SetEquippable(item, slot)
+    self.itemEquipLoc[item] = slot
+end
+
+function WowMock:EquipItem(item)
+    local invType = self.itemEquipLoc[item]
+    if not invType then
+        print("Can not equip item " .. item)
+    end
+
+    self.itemsSlots[InvTypeToSlot[invType]] = item
+
+    if invType == "INVTYPE_2HWEAPON" then
+        -- Can't equip an off-hand at the same time
+        self.itemsSlots[17] = nil
+    end
+end
 
 WowMock:Init()
 
@@ -146,6 +222,26 @@ function UnitClass()
     return WowMock.unitClass
 end
 
+function IsEquippableItem(itemId)
+    if WowMock.itemEquipLoc[WowMock:GetItemIdFromName(itemId)] then
+        return true
+    else
+        return false
+    end
+end
+
+function IsEquippedItem(item)
+    local itemId = WowMock:GetItemIdFromName(item)
+    
+    local invType = WowMock.itemEquipLoc[itemId]
+    if not invType then
+        return false
+    end
+
+    local slot = InvTypeToSlot[invType]
+    return WowMock.itemsSlots[slot] == itemId
+end
+
 -- Frame
 Frame = {}
 UISpecialFrames = {}
@@ -190,6 +286,10 @@ function Frame:SetWidth(w)
     self.width = w
 end
 
+function Frame:GetWidth()
+    return self.width
+end
+
 function Frame:SetHeight(h)
     self.height = h
 end
@@ -198,8 +298,12 @@ function Frame:SetFont(font)
     self.font = font;
 end
 
-function Frame:SetText(text)
+function Frame:SetText(text)    
     self.text = text;
+end
+
+function Frame:GetText()
+    return self.text
 end
 
 function Frame:CreateFontString(name, drawLayer, templateName)
@@ -237,6 +341,10 @@ function Frame:SetBackdropColor(r, g, b, a)
     self.backgroundG = g
     self.backgroundB = b
     self.backgroundA = a
+end
+
+function Frame:GetBackdropColor()
+    return self.backgroundR, self.backgroundG, self.backgroundB, self.backgroundA
 end
 
 function Frame:RegisterForClicks()
@@ -280,6 +388,7 @@ end
 CreateFrame("Frame", "UIParent")
 CreateFrame("FontString", "FontString")
 CreateFrame("FontString", "GameFontNormalSmall", nil, "FontString")
+CreateFrame("FontString", "SystemFont_Outline_Small", nil, "FontString")
 CreateFrame("Button", "UIPanelButtonTemplate")
 CreateFrame("Button", "InsecureActionButtonTemplate")
 CreateFrame("Frame", "BackdropTemplate")
@@ -309,6 +418,10 @@ function GetItemCount(itemId)
     return WowMock.itemCounts[itemId] or 0
 end
 
+function GetItemSpell(itemId)
+    return itemId + 100000
+end
+
 -- Spells
 function GetSpellInfo(spellId)
     if WowMock.loaded then
@@ -323,7 +436,17 @@ function IsSpellKnown(spellId)
 end
 
 function GetSpellCooldown(spellId)
-    return 0
+    if WowMock.spellCooldowns[spellId] then
+        local start = WowMock.spellCooldowns[spellId][1]
+        local duration = WowMock.spellCooldowns[spellId][2]
+        if GetTime() >= start + duration then
+            return 0, 0, 1
+        else
+            return start, duration, 1
+        end
+    else
+        return 0,0,1
+    end
 end
 
 -- Quests
@@ -335,10 +458,27 @@ end
 -- Container
 C_Container = {}
 
-function C_Container:GetItemCooldown(itemId)
-    return 0
+function C_Container.GetItemCooldown(itemId, ...)
+    if WowMock.itemCooldowns[itemId] then
+        local start = WowMock.itemCooldowns[itemId][1]
+        local duration = WowMock.itemCooldowns[itemId][2]
+        if GetTime() >= start + duration then
+            return 0,0,1
+        else
+            return start, duration, 1
+        end
+    else
+        return 0,0,1
+    end
 end
 
-function IsEquippableItem(itemId)
-    return false
+-- Toys
+C_ToyBox = {}
+
+function C_ToyBox.IsToyUsable(itemId)
+    return true
+end
+
+function PlayerHasToy(itemId)
+    return WowMock.knownToys[itemId]
 end
