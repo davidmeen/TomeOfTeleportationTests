@@ -2,6 +2,7 @@ local AddonFolder = "D:/World of Warcraft/_retail_/Interface/Addons/TomeOfTelepo
 dofile("WowMock.lua")
 dofile(AddonFolder .. "TomeOfTeleportation.lua")
 dofile(AddonFolder .. "Spells.lua")
+dofile(AddonFolder .. "TomeQuickMenu.lua")
 
 
 Item_Hearthstone = 6948
@@ -19,6 +20,7 @@ Fixture = {}
 function Fixture:BeforeTest()
     CreateFrame("Frame", "TeleporterFrame")
     Teleporter_OnAddonLoaded()
+    Teleporter_OnLoad()
     WowMock:SetOnUpdate(Teleporter_OnUpdate)
 
     TeleporterClose()

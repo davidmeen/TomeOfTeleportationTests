@@ -36,6 +36,30 @@ function getglobal(name)
     return _G[name]
 end
 
+SlashCmdList = {}
+
+local InvTypeToSlot = 
+{	
+	["INVTYPE_HEAD"] = 1,
+	["INVTYPE_NECK"] = 2,
+	["INVTYPE_SHOULDER"] = 3,
+	["INVTYPE_BODY"] = 4,
+	["INVTYPE_CHEST"] = 5,
+	["INVTYPE_ROBE"] = 5,
+	["INVTYPE_WAIST"] = 6,
+	["INVTYPE_LEGS"] = 7,
+	["INVTYPE_FEET"] = 8,
+	["INVTYPE_WRIST"] = 9,
+	["INVTYPE_HAND"] = 10,
+	["INVTYPE_FINGER"] = 11,
+	["INVTYPE_TRINKET"] = 13,
+	["INVTYPE_CLOAK"] = 15,
+	["INVTYPE_2HWEAPON"] = 16,
+	["INVTYPE_WEAPONMAINHAND"] = 16,
+    ["INVTYPE_HOLDABLE"] = 17,
+    ["INVTYPE_SHIELD"] = 17,
+	["INVTYPE_TABARD"] = 19
+}
 
 -- WowMock object
 function WowMock:Init()
@@ -60,6 +84,11 @@ function WowMock:Init()
     self.completedQuests = {}
 
     self.frames = {}
+
+    self.usingItem = nil
+    self.usingSpell = nil
+
+    SlashCmdList = {}
 end
 
 function WowMock:SetInCombat(b)
@@ -84,8 +113,19 @@ function WowMock:AddItem(itemId)
 end
 
 function WowMock:GetItemIdFromName(itemName)
-    -- Names are always itemN
-    return tonumber(string.sub(itemName, 5)) or itemName
+    if string.sub(itemName, 1, 4) == "Item" then
+        return tonumber(string.sub(itemName, 5))
+    else
+        return itemName
+    end
+end
+
+function WowMock:GetSpellIdFromName(spellName)
+    if string.sub(spellName, 1, 5) == "Spell" then
+        return tonumber(string.sub(spellName, 6)) or spellName
+    else
+        return spellName
+    end
 end
 
 function WowMock:AddToy(spellId)
@@ -128,35 +168,71 @@ function WowMock:SetOnUpdate(onUpdate)
     self.onUpdate = onUpdate
 end
 
+function WowMock:RunFrameScript(frame, action, param)
+    local script = frame.scripts[action]
+    if script then
+        script(frame, param)
+    end
+end
+
+function WowMock:RunScript(script)
+    for line in string.gmatch(script, "[^\n]+") do
+        local match = string.gmatch(line, "[^%s]+")
+        local command, p1, p2, p3 = match(), match(), match(), match()
+        
+        if command == "/use" then
+            local itemId = WowMock:GetItemIdFromName(p1)
+            if not IsEquippableItem(itemId) or IsEquippedItem(itemId) then
+                WowMock.usingItem = itemId
+            end
+        elseif command == "/cast" then
+            local spellId = WowMock:GetSpellIdFromName(p1)
+            self.usingSpell = spellId
+        else
+            for n, v in pairs(SlashCmdList) do
+                local i = 1
+                while _G["SLASH_" .. n .. i] ~= nil do
+                    if _G["SLASH_" .. n .. i] == command then
+                        v(p1, p2, p3)
+                    end
+                    i = i + 1
+                end
+            end
+        end
+    end
+end
+
+function WowMock:ClickFrame(frame)
+    WowMock:RunFrameScript(frame, "OnMouseDown", "LeftButton")
+    WowMock:RunFrameScript(frame, "OnMouseUp", "LeftButton")
+    WowMock:RunFrameScript(frame, "OnClick", "LeftButton")
+    if frame.attributes["type"] == "macro" and frame.attributes["macrotext"] then
+        WowMock:RunScript(frame.attributes["macrotext"])
+    end
+end
+
+function WowMock:IsUsingItem(itemId)
+    return self.usingItem == itemId
+end
+
+function WowMock:IsUsingSpell(spellId)
+    return self.usingSpell == spellId
+end
+
+function WowMock:SetEquipped(itemId)
+    self.itemsSlots[InvTypeToSlot[self.itemEquipLoc[itemId]]] = itemId
+end
+
 function WowMock:Tick(dt)
     self.time = self.time + dt
     if (self.onUpdate) then
         self.onUpdate()
     end
-end
 
-local InvTypeToSlot = 
-{	
-	["INVTYPE_HEAD"] = 1,
-	["INVTYPE_NECK"] = 2,
-	["INVTYPE_SHOULDER"] = 3,
-	["INVTYPE_BODY"] = 4,
-	["INVTYPE_CHEST"] = 5,
-	["INVTYPE_ROBE"] = 5,
-	["INVTYPE_WAIST"] = 6,
-	["INVTYPE_LEGS"] = 7,
-	["INVTYPE_FEET"] = 8,
-	["INVTYPE_WRIST"] = 9,
-	["INVTYPE_HAND"] = 10,
-	["INVTYPE_FINGER"] = 11,
-	["INVTYPE_TRINKET"] = 13,
-	["INVTYPE_CLOAK"] = 15,
-	["INVTYPE_2HWEAPON"] = 16,
-	["INVTYPE_WEAPONMAINHAND"] = 16,
-    ["INVTYPE_HOLDABLE"] = 17,
-    ["INVTYPE_SHIELD"] = 17,
-	["INVTYPE_TABARD"] = 19
-}
+    -- Assume all spells complete in a single tick
+    self.usingItem = nil
+    self.usingSpell = nil
+end
 
 function WowMock:SetEquippable(item, slot)
     self.itemEquipLoc[item] = slot
@@ -247,6 +323,8 @@ Frame = {}
 UISpecialFrames = {}
 
 function Frame:Construct()
+    self.scripts = {}
+    self.attributes = {}
 end
 
 function Frame:GetEffectiveScale()
@@ -316,7 +394,8 @@ end
 function Frame:RegisterForDrag()
 end
 
-function Frame:SetScript()
+function Frame:SetScript(action, script)
+    self.scripts[action] = script
 end
 
 function Frame:SetMovable()
@@ -350,7 +429,8 @@ end
 function Frame:RegisterForClicks()
 end
 
-function Frame:SetAttribute()
+function Frame:SetAttribute(name, value)
+    self.attributes[name] = value
 end
 
 function Frame:SetJustifyH()
@@ -406,7 +486,8 @@ function GameFontNormalSmall:GetStringWidth()
 end
 
 -- Items
-function GetItemInfo(itemId)
+function GetItemInfo(item)
+    local itemId = WowMock:GetItemIdFromName(item)
     if WowMock.loaded then
         return "Item" .. itemId, "itemLink" .. itemId, 3, 0, 0, WowMock.itemTypes[itemId], WowMock.itemSubTypes[itemId], 1, WowMock.itemEquipLoc[itemId], "tex"..itemId, 0, itemId, itemId, 1, 10, 0, false
     else
@@ -418,8 +499,8 @@ function GetItemCount(itemId)
     return WowMock.itemCounts[itemId] or 0
 end
 
-function GetItemSpell(itemId)
-    return itemId + 100000
+function GetItemSpell(item)
+    return WowMock:GetItemIdFromName(item) + 100000
 end
 
 -- Spells

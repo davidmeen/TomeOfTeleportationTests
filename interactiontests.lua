@@ -58,4 +58,45 @@ AddTests(
         f:TestEquals(endG, readyColourG, "Button should have the ready green channel")
         f:TestEquals(endB, readyColourB, "Button should have the ready blue channel")
     end,
+    ["HaveItem_ClickButton_ItemIsUsed"] = function(f)
+        WowMock:AddItem(Item_Hearthstone)
+        
+        TeleporterOpenFrame()
+
+        WowMock:ClickFrame(f:FindButtons()[1])
+
+        f:TestEquals(WowMock:IsUsingItem(Item_Hearthstone), true, "Should be using hearthstone")
+    end,
+    ["HaveSpell_ClickButton_SpellIsUsed"] = function(f)
+        WowMock:AddSpell(Spell_AstralRecall)
+        
+        TeleporterOpenFrame()
+
+        WowMock:ClickFrame(f:FindButtons()[1])
+
+        f:TestEquals(WowMock:IsUsingSpell(Spell_AstralRecall), true, "Should be using Astral Recall")
+    end,
+    ["HaveEquipableItemUnequiped_ClickButton_ItemIsEquiped"] = function(f)
+        WowMock:AddItem(Item_Atiesh)
+        WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
+        
+        TeleporterOpenFrame()
+
+        --TODO
+        --WowMock:ClickFrame(f:FindButtons()[1])
+
+        --f:TestEquals(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
+        --f:TestEquals(WowMock:IsUsingSpell(Item_Hearthstone), false, "Should not be using Atiesh")
+    end,
+    ["HaveEquipableItemEquiped_ClickButton_ItemIsUsed"] = function(f)
+        WowMock:AddItem(Item_Atiesh)
+        WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
+        WowMock:SetEquipped(Item_Atiesh)
+        
+        TeleporterOpenFrame()
+
+        WowMock:ClickFrame(f:FindButtons()[1])
+
+        f:TestEquals(WowMock:IsUsingItem(Item_Atiesh), true, "Should be using Atiesh")
+    end
 })
