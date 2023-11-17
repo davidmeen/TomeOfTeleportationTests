@@ -82,7 +82,8 @@ AddTests(
         f:TestEquals(astralRecallCooldownString:GetText(), "25s", "The Astral Recall button should display the correct cooldown before ticking")
 
         WowMock:Tick(1)
-        WowMock:SetTime(timeNow)
+        
+        astralRecallCooldownString = TeleporterTest_GetButtonSettingsFromSpellId(Spell_AstralRecall).cooldownString
         f:TestEquals(astralRecallCooldownString:GetText(), "24s", "The Astral Recall button should display the correct cooldown after ticking")
     end, 
     ["SpellsOnCooldown_OpenFrame_CooldownBarWidthIsProportialToTimeRemaining"] = function(f)

@@ -61,6 +61,9 @@ local InvTypeToSlot =
 	["INVTYPE_TABARD"] = 19
 }
 
+NUM_BAG_SLOTS = 6
+local SlotsPerBag = 20
+
 -- WowMock object
 function WowMock:Init()
     self.inCombat = false
@@ -88,7 +91,16 @@ function WowMock:Init()
     self.usingItem = nil
     self.usingSpell = nil
 
+    self.inventory = {}
+
     SlashCmdList = {}
+    self.eventHandlers = {}
+
+    self.itemIdToName = {}
+    self.itemNameToId = {}
+    self.spellIdToName = {}
+    self.spellNameToId = {}
+    self.itemIdToSpellId = {}
 end
 
 function WowMock:SetInCombat(b)
@@ -99,37 +111,66 @@ function WowMock:SetLoaded(b)
     self.loaded = b;
 end
 
-function WowMock:AddSpell(spellId)
+function WowMock:AddSpell(spellId, name)
     self.knownSpells[spellId] = true
+
+    name = name or "Spell" .. spellId
+    self.spellIdToName[spellId] = name
+    self.spellNameToId[name] = spellId
 end
 
-function WowMock:AddItem(itemId)
+function WowMock:AddItem(itemId, slot, name)
     self.knownItems[itemId] = true
     if self.itemCounts[itemId] then 
         self.itemCounts[itemId] = self.itemCounts[itemId] + 1
     else
         self.itemCounts[itemId] = 1
     end
+
+    slot = slot or 0
+    if not WowMock.inventory[slot] then
+        WowMock.inventory[slot] = {}
+    end
+    tinsert(WowMock.inventory[slot], WowMock.pickedUp)
+
+    WowMock:SetupItem(itemId, name)
+end
+
+function WowMock:SetupItem(itemId, name)
+    name = name or "Item" .. itemId
+    self.itemIdToName[itemId] = name
+    self.itemNameToId[name] = itemId
+
+    local spellId = 100000 + itemId
+    self.itemIdToSpellId[itemId] = spellId
+    self:AddSpell(spellId, "Using " .. name)
 end
 
 function WowMock:GetItemIdFromName(itemName)
-    if string.sub(itemName, 1, 4) == "Item" then
-        return tonumber(string.sub(itemName, 5))
-    else
-        return itemName
+    if self.itemNameToId[itemName] then
+        return self.itemNameToId[itemName]
+    elseif tonumber(itemName) then
+        return tonumber(itemName)
+    elseif itemName ~= "<Loading>" then
+        -- Don't realy need to do this, makes it easier for me to see test bugs.
+        print("Unknown item " .. itemName)
     end
 end
 
 function WowMock:GetSpellIdFromName(spellName)
-    if string.sub(spellName, 1, 5) == "Spell" then
-        return tonumber(string.sub(spellName, 6)) or spellName
-    else
-        return spellName
+    if self.spellNameToId[spellName] then
+        return self.spellNameToId[spellName]
+    elseif tonumber(spellName) then
+        return tonumber(spellName)
+    elseif spellName ~= "<Loading>" then
+        print("Unknown spell " .. spellName)
     end
 end
 
-function WowMock:AddToy(spellId)
-    self.knownToys[spellId] = true
+function WowMock:AddToy(itemId, name)
+    self.knownToys[itemId] = true
+
+    WowMock:SetupItem(itemId, name)
 end
 
 function WowMock:FindFramesWithTemplate(template)
@@ -178,22 +219,35 @@ end
 function WowMock:RunScript(script)
     for line in string.gmatch(script, "[^\n]+") do
         local match = string.gmatch(line, "[^%s]+")
-        local command, p1, p2, p3 = match(), match(), match(), match()
-        
+        local command, param = match(), match(), match(), match()
+        local split = string.find(line, " ")
+        if split then
+            command = string.sub(line, 1, split - 1)
+            param = string.sub(line, split + 1)
+        else
+            command = line
+            param = nil
+        end
+
         if command == "/use" then
-            local itemId = WowMock:GetItemIdFromName(p1)
-            if not IsEquippableItem(itemId) or IsEquippedItem(itemId) then
+            local itemId = WowMock:GetItemIdFromName(param)
+            if itemId and (not IsEquippableItem(itemId) or IsEquippedItem(itemId)) then
                 WowMock.usingItem = itemId
             end
         elseif command == "/cast" then
-            local spellId = WowMock:GetSpellIdFromName(p1)
+            local spellId
+            if WowMock.itemNameToId[param] then
+                spellId = GetItemSpell(WowMock:GetItemIdFromName(param))
+            else
+                spellId = WowMock:GetSpellIdFromName(param)
+            end
             self.usingSpell = spellId
         else
             for n, v in pairs(SlashCmdList) do
                 local i = 1
                 while _G["SLASH_" .. n .. i] ~= nil do
                     if _G["SLASH_" .. n .. i] == command then
-                        v(p1, p2, p3)
+                        v(param)
                     end
                     i = i + 1
                 end
@@ -230,8 +284,16 @@ function WowMock:Tick(dt)
     end
 
     -- Assume all spells complete in a single tick
-    self.usingItem = nil
-    self.usingSpell = nil
+    if self.usingItem then
+        local spellName = GetSpellInfo(GetItemSpell(self.usingItem))
+        WowMock:OnEvent("UNIT_SPELLCAST_SUCCEEDED", "player", "{...}", spellName)
+        self.usingItem = nil
+    end
+    if self.usingSpell then
+        local spellName = GetSpellInfo(self.usingSpell)
+        WowMock:OnEvent("UNIT_SPELLCAST_SUCCEEDED", "player", "{...}", spellName)
+        self.usingSpell = nil
+    end
 end
 
 function WowMock:SetEquippable(item, slot)
@@ -249,6 +311,23 @@ function WowMock:EquipItem(item)
     if invType == "INVTYPE_2HWEAPON" then
         -- Can't equip an off-hand at the same time
         self.itemsSlots[17] = nil
+    end
+end
+
+function WowMock:OnEvent(event, ...)
+    local eventHandlers = self.eventHandlers[event]
+    if eventHandlers then
+        for i, frame in ipairs(eventHandlers) do
+            frame:OnEvent(event, ...)
+        end
+    end
+end
+
+function WowMock:DeleteFrames()
+    for n, v in ipairs(self.frames) do
+        if v.name then
+            _G[v.name] = nil
+        end
     end
 end
 
@@ -306,14 +385,13 @@ function IsEquippableItem(itemId)
     end
 end
 
-function IsEquippedItem(item)
+function IsEquippedItem(item)    
     local itemId = WowMock:GetItemIdFromName(item)
     
     local invType = WowMock.itemEquipLoc[itemId]
     if not invType then
         return false
     end
-
     local slot = InvTypeToSlot[invType]
     return WowMock.itemsSlots[slot] == itemId
 end
@@ -410,6 +488,9 @@ end
 
 function Frame:Hide()
     self.visible = false
+    if self.onHide then
+        self.onHide(self)
+    end
 end
 
 function Frame:ApplyBackdrop()
@@ -439,6 +520,22 @@ end
 function Frame:SetJustifyV()
 end
 
+function Frame:IsVisible()
+    -- Should also check parents
+    return self.visible
+end
+
+function Frame:RegisterEvent(event)
+    if not WowMock.eventHandlers[event] then
+        WowMock.eventHandlers[event] = {}
+    end
+    tinsert(WowMock.eventHandlers[event], self)
+end
+
+function Frame:SetOnHide(hide)
+    self.onHide = hide
+end
+
 function CreateFrame(frameType, name, parent, template, id)
     local frame = {}
     frame.frameType = frameType
@@ -455,6 +552,7 @@ function CreateFrame(frameType, name, parent, template, id)
     frame.id = id
     frame.points = {}
     frame.template = template
+    frame.visible = true
 
     if not frame.Construct then print(template) end
 
@@ -489,7 +587,7 @@ end
 function GetItemInfo(item)
     local itemId = WowMock:GetItemIdFromName(item)
     if WowMock.loaded then
-        return "Item" .. itemId, "itemLink" .. itemId, 3, 0, 0, WowMock.itemTypes[itemId], WowMock.itemSubTypes[itemId], 1, WowMock.itemEquipLoc[itemId], "tex"..itemId, 0, itemId, itemId, 1, 10, 0, false
+        return WowMock.itemIdToName[itemId] or "FAKEITEM", "itemLink" .. itemId, 3, 0, 0, WowMock.itemTypes[itemId], WowMock.itemSubTypes[itemId], 1, WowMock.itemEquipLoc[itemId], "tex"..itemId, 0, itemId, itemId, 1, 10, 0, false
     else
         return nil
     end
@@ -500,15 +598,28 @@ function GetItemCount(itemId)
 end
 
 function GetItemSpell(item)
-    return WowMock:GetItemIdFromName(item) + 100000
+    return WowMock.spellIdToName[WowMock.itemIdToSpellId[WowMock:GetItemIdFromName(item)]]
+end
+
+function GetInventoryItemID(unit, slot)
+    return WowMock.itemsSlots[slot]
+end
+
+function EquipItemByName(item, slot)
+    if not slot then 
+        print("Unsupported: Unknown slot")
+    end
+    local itemId = WowMock:GetItemIdFromName(item)
+    WowMock.itemsSlots[slot] = itemId
 end
 
 -- Spells
-function GetSpellInfo(spellId)
+function GetSpellInfo(spell)
+    local spellId = WowMock:GetSpellIdFromName(spell)
     if WowMock.loaded then
-        return "Spell"..spellId, nil, "icon"..spellId, 1.5, 0, 0, spellId, "icon"..spellId
-    else
-        return nil
+        return WowMock.spellIdToName[spellId] or "FAKESPELL", nil, "icon"..spellId, 1.5, 0, 0, spellId, "icon"..spellId
+    else        
+        return "nil"
     end
 end
 
@@ -551,6 +662,36 @@ function C_Container.GetItemCooldown(itemId, ...)
     else
         return 0,0,1
     end
+end
+
+function C_Container.GetContainerNumSlots()
+    return SlotsPerBag
+end
+
+function C_Container.GetContainerItemID(container, slot)
+    if not WowMock.inventory[container] then
+        WowMock.inventory[container] = {}
+    end
+    return WowMock.inventory[container][slot]
+end
+
+function PickupInventoryItem(slot)
+    WowMock.pickedUp = WowMock.itemsSlots[slot]
+    WowMock.itemsSlots[slot] = nil
+end
+
+function PutItemInBackpack()
+    if not WowMock.inventory[0] then
+        WowMock.inventory[0] = {}
+    end
+    tinsert(WowMock.inventory[0], WowMock.pickedUp)
+end
+
+function PutItemInBag(slot)
+    if not WowMock.inventory[slot - 30] then
+        WowMock.inventory[slot - 30] = {}
+    end
+    tinsert(WowMock.inventory[slot - 30], WowMock.pickedUp)
 end
 
 -- Toys

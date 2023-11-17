@@ -1,16 +1,3 @@
-local unequippedR = TeleporterGetOption("unequipedColourR")
-local unequippedG = TeleporterGetOption("unequipedColourG")
-local unequippedB = TeleporterGetOption("unequipedColourB")
-
-local cooldownColourR = TeleporterGetOption("cooldownColourR")
-local cooldownColourG = TeleporterGetOption("cooldownColourG")
-local cooldownColourB = TeleporterGetOption("cooldownColourB")
-
-local readyColourR = TeleporterGetOption("readyColourR")
-local readyColourG = TeleporterGetOption("readyColourG")
-local readyColourB = TeleporterGetOption("readyColourB")
-
-
 AddTests(
 {    
     ["ItemIsEquippable_EquipItemWhileFrameIsOpen_ButtonColourChanges"] = function(f)
@@ -18,22 +5,12 @@ AddTests(
         WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
         TeleporterOpenFrame()
 
-        local backdrop = TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh).frame.backdrop
-        
-        local initialR, initialG, initialB = backdrop:GetBackdropColor()
-
-        f:TestEquals(initialR, unequippedR, "Button should have the unequipped red channel")
-        f:TestEquals(initialG, unequippedG, "Button should have the unequipped green channel")
-        f:TestEquals(initialB, unequippedB, "Button should have the unequipped blue channel")
+        f:TestButtonColour(TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh), "unequipedColour", "Button should have the unequipped colour")
 
         WowMock:EquipItem(Item_Atiesh)
         WowMock:Tick(1)
 
-        local endR, endG, endB = backdrop:GetBackdropColor()
-
-        f:TestEquals(endR, readyColourR, "Button should have the equipped red channel")
-        f:TestEquals(endG, readyColourG, "Button should have the equipped green channel")
-        f:TestEquals(endB, readyColourB, "Button should have the equipped blue channel")
+        f:TestButtonColour(TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh), "readyColour", "Button should have the ready colour")
 
     end,
     ["SpellIsOnCooldown_GoesOffCooldown_ButtonColourChanges"] = function(f)
@@ -42,23 +19,14 @@ AddTests(
 
         TeleporterOpenFrame()
 
-        local backdrop = TeleporterTest_GetButtonSettingsFromItemId(Item_Hearthstone).frame.backdrop
-        
-        local initialR, initialG, initialB = backdrop:GetBackdropColor()
-
-        f:TestEquals(initialR, cooldownColourR, "Button should have the cooldown red channel")
-        f:TestEquals(initialG, cooldownColourG, "Button should have the cooldown green channel")
-        f:TestEquals(initialB, cooldownColourB, "Button should have the cooldown blue channel")
+        f:TestButtonColour(TeleporterTest_GetButtonSettingsFromItemId(Item_Hearthstone), "cooldownColour", "Button should have the cooldown colour")
 
         WowMock:Tick(1)
 
-        local endR, endG, endB = backdrop:GetBackdropColor()
-
-        f:TestEquals(endR, readyColourR, "Button should have the ready red channel")
-        f:TestEquals(endG, readyColourG, "Button should have the ready green channel")
-        f:TestEquals(endB, readyColourB, "Button should have the ready blue channel")
+        f:TestButtonColour(TeleporterTest_GetButtonSettingsFromItemId(Item_Hearthstone), "readyColour", "Button should have the ready colour")
+        
     end,
-    ["HaveItem_ClickButton_ItemIsUsed"] = function(f)
+    ["HaveItem_ClickButton_ItemIsUsedAndClosesFrame"] = function(f)
         WowMock:AddItem(Item_Hearthstone)
         
         TeleporterOpenFrame()
@@ -66,6 +34,17 @@ AddTests(
         WowMock:ClickFrame(f:FindButtons()[1])
 
         f:TestEquals(WowMock:IsUsingItem(Item_Hearthstone), true, "Should be using hearthstone")
+    end,
+    ["HaveItem_ClickButtonAndTimePasses_FrameIsClosed"] = function(f)
+        WowMock:AddItem(Item_Hearthstone)
+        
+        TeleporterOpenFrame()
+
+        WowMock:ClickFrame(f:FindButtons()[1])
+
+        f:TestEquals(TeleporterFrame:IsVisible(), true, "Frame should be open")
+        WowMock:Tick(1)
+        f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")
     end,
     ["HaveSpell_ClickButton_SpellIsUsed"] = function(f)
         WowMock:AddSpell(Spell_AstralRecall)
@@ -76,17 +55,47 @@ AddTests(
 
         f:TestEquals(WowMock:IsUsingSpell(Spell_AstralRecall), true, "Should be using Astral Recall")
     end,
+    ["HaveSpell_ClickButtonAndTimePasses_FrameIsClosed"] = function(f)
+        WowMock:AddSpell(Spell_AstralRecall)
+        
+        TeleporterOpenFrame()
+
+        WowMock:ClickFrame(f:FindButtons()[1])
+
+        f:TestEquals(TeleporterFrame:IsVisible(), true, "Frame should be open")
+        WowMock:Tick(1)
+        f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")
+    end,
+    ["HaveToy_ClickButton_ToyIsUsed"] = function(f)
+        WowMock:AddToy(Toy_TomeOfTownPortal)
+        
+        TeleporterOpenFrame()
+
+        WowMock:ClickFrame(f:FindButtons()[1])
+
+        f:TestEquals(WowMock:IsUsingSpell(GetItemSpell(Toy_TomeOfTownPortal)), true, "Should be using Tome of Town Portal")
+    end,
+    ["HaveToy_ClickButtonAndTimePasses_FrameIsClosed"] = function(f)
+        WowMock:AddToy(Toy_TomeOfTownPortal)
+        
+        TeleporterOpenFrame()
+
+        WowMock:ClickFrame(f:FindButtons()[1])
+
+        f:TestEquals(TeleporterFrame:IsVisible(), true, "Frame should be open")
+        WowMock:Tick(1)
+        f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")
+    end,
     ["HaveEquipableItemUnequiped_ClickButton_ItemIsEquiped"] = function(f)
         WowMock:AddItem(Item_Atiesh)
         WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
         
         TeleporterOpenFrame()
 
-        --TODO
-        --WowMock:ClickFrame(f:FindButtons()[1])
+        WowMock:ClickFrame(f:FindButtons()[1])
 
-        --f:TestEquals(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
-        --f:TestEquals(WowMock:IsUsingSpell(Item_Hearthstone), false, "Should not be using Atiesh")
+        f:TestEquals(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
+        f:TestEquals(WowMock:IsUsingItem(Item_Atiesh), false, "Should not be using Atiesh")
     end,
     ["HaveEquipableItemEquiped_ClickButton_ItemIsUsed"] = function(f)
         WowMock:AddItem(Item_Atiesh)
@@ -98,5 +107,25 @@ AddTests(
         WowMock:ClickFrame(f:FindButtons()[1])
 
         f:TestEquals(WowMock:IsUsingItem(Item_Atiesh), true, "Should be using Atiesh")
+    end,
+    ["HaveEquipableItemUnequiped_ClickButtonTwice_ItemIsUsedAndClosesFrameAndUnequips"] = function(f)
+        
+        WowMock:AddItem(Item_Atiesh)
+        WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
+        
+        f:TestEquals(IsEquippedItem(Item_Atiesh), false, "Should not have equipped Atiesh")
+        
+        TeleporterOpenFrame()
+        
+        WowMock:ClickFrame(f:FindButtons()[1])
+        f:TestEquals(WowMock:IsUsingItem(Item_Atiesh), false, "Should not be using Atiesh")
+        WowMock:Tick(1)
+        
+        WowMock:ClickFrame(f:FindButtons()[1])        
+        f:TestEquals(WowMock:IsUsingItem(Item_Atiesh), true, "Should be using Atiesh")
+
+        WowMock:Tick(1)
+        f:TestEquals(IsEquippedItem(Item_Atiesh), false, "Should not have equipped Atiesh")
+        f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")
     end
 })
