@@ -131,7 +131,7 @@ function WowMock:AddItem(itemId, slot, name)
     if not WowMock.inventory[slot] then
         WowMock.inventory[slot] = {}
     end
-    tinsert(WowMock.inventory[slot], WowMock.pickedUp)
+    tinsert(WowMock.inventory[slot], itemId)
 
     WowMock:SetupItem(itemId, name)
 end
@@ -260,7 +260,7 @@ function WowMock:ClickFrame(frame)
     WowMock:RunFrameScript(frame, "OnMouseDown", "LeftButton")
     WowMock:RunFrameScript(frame, "OnMouseUp", "LeftButton")
     WowMock:RunFrameScript(frame, "OnClick", "LeftButton")
-    if frame.attributes["type"] == "macro" and frame.attributes["macrotext"] then
+    if frame.attributes["type"] == "macro" and frame.attributes["macrotext"] then        
         WowMock:RunScript(frame.attributes["macrotext"])
     end
 end
@@ -300,11 +300,25 @@ function WowMock:SetEquippable(item, slot)
     self.itemEquipLoc[item] = slot
 end
 
+function WowMock:RemoveFromInventory(item)
+    -- This doesn't handle multiple items of the same type, but that's not needed for the tests.
+    -- Should probably also fail if the item isn't in any bag.
+    for bagIndex, bag in ipairs(self.inventory) do
+        for slot, slotItem in ipairs(bag) do
+            if slotItem == item then
+                bag[slot] = nil
+            end 
+        end
+    end
+end
+
 function WowMock:EquipItem(item)
     local invType = self.itemEquipLoc[item]
     if not invType then
         print("Can not equip item " .. item)
     end
+
+    WowMock:RemoveFromInventory(item)
 
     self.itemsSlots[InvTypeToSlot[invType]] = item
 
@@ -312,6 +326,17 @@ function WowMock:EquipItem(item)
         -- Can't equip an off-hand at the same time
         self.itemsSlots[17] = nil
     end
+end
+
+function WowMock:BagContains(item, bag)
+    if self.inventory[bag] then
+        for slot, slotItem in ipairs(self.inventory[bag]) do
+            if slotItem == item then
+                return true
+            end
+        end
+    end
+    return false
 end
 
 function WowMock:OnEvent(event, ...)
@@ -610,7 +635,9 @@ function EquipItemByName(item, slot)
         print("Unsupported: Unknown slot")
     end
     local itemId = WowMock:GetItemIdFromName(item)
-    WowMock.itemsSlots[slot] = itemId
+    
+    -- Doesn't handle multiple slots with same item type!
+    WowMock:EquipItem(itemId)
 end
 
 -- Spells

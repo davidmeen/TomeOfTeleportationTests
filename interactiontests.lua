@@ -127,5 +127,38 @@ AddTests(
         WowMock:Tick(1)
         f:TestEquals(IsEquippedItem(Item_Atiesh), false, "Should not have equipped Atiesh")
         f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")
+    end,
+    ["HaveTwoWeaponsEquipped_ClickButtonForTwoHandedWeaponThenClose_PlacedBackInBagAndOriginalWeaponsAreEquipped"] = function(f)
+        -- Not real item IDs.
+        local Item_MainHand = 1000
+        local Item_OffHand = 10001
+        WowMock:AddItem(Item_MainHand)
+        WowMock:AddItem(Item_OffHand)
+        WowMock:SetEquippable(Item_MainHand, "INVTYPE_2HWEAPON")
+        WowMock:SetEquippable(Item_OffHand, "INVTYPE_HOLDABLE")
+        WowMock:EquipItem(Item_MainHand)
+        WowMock:EquipItem(Item_OffHand)
+
+        local BagIndex = 2
+        WowMock:AddItem(Item_Atiesh, BagIndex)
+        WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
+        f:TestEquals(WowMock:BagContains(Item_Atiesh, BagIndex), true, "Atiesh should be in bag 2")
+                
+        TeleporterOpenFrame()
+        
+        WowMock:ClickFrame(f:FindButtons()[1])
+        f:TestEquals(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
+        f:TestEquals(IsEquippedItem(Item_MainHand), false, "Should have unequipped main hand")
+        f:TestEquals(IsEquippedItem(Item_OffHand), false, "Should have unequipped off hand")
+        -- Should be in a different bag, but the mock isn't accurate enough.
+        f:TestEquals(WowMock:BagContains(Item_MainHand, 0), true, "Main hand should have been placed in a bag")
+        f:TestEquals(WowMock:BagContains(Item_OffHand, 0), true, "Off hand should have been placed in a bag")
+        WowMock:Tick(1)
+        
+        TeleporterClose()  
+        f:TestEquals(IsEquippedItem(Item_Atiesh), false, "Should have unequipped Atiesh")
+        f:TestEquals(IsEquippedItem(Item_MainHand), true, "Should have equipped main hand")
+        f:TestEqualsKnownFailure(IsEquippedItem(Item_OffHand), true, "Should have equipped off hand")
+        f:TestEquals(WowMock:BagContains(Item_Atiesh, BagIndex), true, "Atiesh should have been placed back in its original bag")
     end
 })

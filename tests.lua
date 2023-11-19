@@ -54,6 +54,13 @@ function Fixture:TestEquals(v1, v2, text)
     end
 end
 
+function Fixture:TestEqualsKnownFailure(v1, v2, text)
+    if v1 ~= v2 then
+        print(self.name .. " \"" .. text .. "\" failed (known bug). " .. tostring(v1) .. " does not equal " .. tostring(v2) .. ".")
+        self.result = false
+    end
+end
+
 function Fixture:TestButtonColour(button, colourSetting, message)
     local settingR = TeleporterGetOption(colourSetting .. "R")
     local settingG = TeleporterGetOption(colourSetting .. "G")
@@ -102,10 +109,10 @@ local numFailed = 0
 
 for name, testFunction in pairs(Tests) do
     -- TODO: On a switch
-    --local runOnly1 = "OneItemOwned_OpenFrame_OneZoneLabelAndOneButtonDisplayed"
+    --local runOnly1 = "HaveTwoWeaponsEquipped_ClickButtonForTwoHandedWeaponThenClose_PlacedBackInBagAndOriginalWeaponsAreEquipped"
     --local runOnly2 = "TwoSpellsKnown_OpenFrame_TwoZoneLabelsAndTwoButtonDisplayed"    
     if not runOnly1 or name == runOnly1 or name == runOnly2 then
-        print(name)
+        --print(name)
 
         WowMock:Init()
         local Fixture f = CreateFixture(name)
