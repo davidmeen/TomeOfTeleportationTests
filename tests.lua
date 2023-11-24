@@ -1,4 +1,4 @@
-local AddonFolder = "D:/World of Warcraft/_retail_/Interface/Addons/TomeOfTeleportation/"
+local AddonFolder = arg[1] or "C:/World of Warcraft/_retail_/Interface/Addons/TomeOfTeleportation/"
 dofile("WowMock.lua")
 dofile(AddonFolder .. "TomeOfTeleportation.lua")
 dofile(AddonFolder .. "Spells.lua")
@@ -10,6 +10,10 @@ Item_Atiesh = 22589
 Item_ScrollOfTownPortal = 142543
 
 Toy_TomeOfTownPortal = 142542
+Item_DarkPortal = 93672
+Item_FireEatersHearthstone = 166746
+Item_EternalTravelersHearthstone = 172179
+Item_TimewalkersHearthstone = 193588
 
 Spell_AstralRecall = 556
 Spell_TeleportOrgrimmar = 3567
@@ -23,6 +27,10 @@ function Fixture:BeforeTest()
     Teleporter_OnAddonLoaded()
     Teleporter_OnLoad()
     WowMock:SetOnUpdate(Teleporter_OnUpdate)
+    WowMock:SetLoaded(true)
+
+    TomeOfTele_Options = {}
+    TomeOfTele_ShareOptions = false
 
     TeleporterFrame:SetOnHide(Teleporter_OnHide)
 
@@ -58,6 +66,8 @@ function Fixture:TestEqualsKnownFailure(v1, v2, text)
     if v1 ~= v2 then
         print(self.name .. " \"" .. text .. "\" failed (known bug). " .. tostring(v1) .. " does not equal " .. tostring(v2) .. ".")
         self.result = false
+    else
+        print(self.name .. " \"" .. text .. "\" expected to fail but didn't.")
     end
 end
 
@@ -103,14 +113,15 @@ end
 
 dofile("layouttests.lua")
 dofile("interactiontests.lua")
+dofile("settingstests.lua")
 
 local numSucceeded = 0
 local numFailed = 0
 
 for name, testFunction in pairs(Tests) do
     -- TODO: On a switch
-    --local runOnly1 = "HaveTwoWeaponsEquipped_ClickButtonForTwoHandedWeaponThenClose_PlacedBackInBagAndOriginalWeaponsAreEquipped"
-    --local runOnly2 = "TwoSpellsKnown_OpenFrame_TwoZoneLabelsAndTwoButtonDisplayed"    
+    --local runOnly1 = "RandomHearthstoneEnabled_OpenFrameAndWait_SelectedItemDoesNotChange"
+    --local runOnly2 = "HaveEquipableItemUnequiped_ClickButtonTwice_ItemIsUsedAndClosesFrameAndUnequips"    
     if not runOnly1 or name == runOnly1 or name == runOnly2 then
         --print(name)
 

@@ -160,5 +160,33 @@ AddTests(
         f:TestEquals(IsEquippedItem(Item_MainHand), true, "Should have equipped main hand")
         f:TestEqualsKnownFailure(IsEquippedItem(Item_OffHand), true, "Should have equipped off hand")
         f:TestEquals(WowMock:BagContains(Item_Atiesh, BagIndex), true, "Atiesh should have been placed back in its original bag")
-    end
+    end,
+    ["AllSpellsLoaded_EquippableItemButtonClickedThenWait_ItemStaysEquipped"]  = function(f)
+        WowMock:AddItem(Item_Atiesh)
+        WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
+
+        TeleporterOpenFrame()
+        
+        WowMock:Tick(1)
+        local atieshButton = TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh)
+        WowMock:ClickFrame(atieshButton.frame)
+        f:TestEquals(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
+        WowMock:Tick(1)
+        f:TestEquals(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
+    end,
+    ["NotAllSpellsLoaded_EquippableItemButtonClicked_ItemStaysEquipped"]  = function(f)
+        WowMock:AddItem(Item_Atiesh)
+        WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
+
+        WowMock:SetItemLoaded(Item_DarkPortal, false)
+
+        TeleporterOpenFrame()
+        
+        WowMock:Tick(1)
+        local atieshButton = TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh)
+        WowMock:ClickFrame(atieshButton.frame)
+        f:TestEquals(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
+        WowMock:Tick(1)
+        f:TestEqualsKnownFailure(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
+    end,
 })

@@ -72,6 +72,7 @@ function WowMock:Init()
     self.knownToys = {}
     self.time = 100000
     self.loaded = true
+    self.itemUnloaded = {}
     self.currentMap = 0
     self.grouped = false
 
@@ -109,6 +110,10 @@ end
 
 function WowMock:SetLoaded(b)
     self.loaded = b;
+end
+
+function WowMock:SetItemLoaded(item, b)
+    self.itemUnloaded[item] = not b
 end
 
 function WowMock:AddSpell(spellId, name)
@@ -260,7 +265,7 @@ function WowMock:ClickFrame(frame)
     WowMock:RunFrameScript(frame, "OnMouseDown", "LeftButton")
     WowMock:RunFrameScript(frame, "OnMouseUp", "LeftButton")
     WowMock:RunFrameScript(frame, "OnClick", "LeftButton")
-    if frame.attributes["type"] == "macro" and frame.attributes["macrotext"] then        
+    if frame.attributes["type"] == "macro" and frame.attributes["macrotext"] then
         WowMock:RunScript(frame.attributes["macrotext"])
     end
 end
@@ -611,7 +616,7 @@ end
 -- Items
 function GetItemInfo(item)
     local itemId = WowMock:GetItemIdFromName(item)
-    if WowMock.loaded then
+    if WowMock.loaded and not WowMock.itemUnloaded[item] then
         return WowMock.itemIdToName[itemId] or "FAKEITEM", "itemLink" .. itemId, 3, 0, 0, WowMock.itemTypes[itemId], WowMock.itemSubTypes[itemId], 1, WowMock.itemEquipLoc[itemId], "tex"..itemId, 0, itemId, itemId, 1, 10, 0, false
     else
         return nil
@@ -646,7 +651,7 @@ function GetSpellInfo(spell)
     if WowMock.loaded then
         return WowMock.spellIdToName[spellId] or "FAKESPELL", nil, "icon"..spellId, 1.5, 0, 0, spellId, "icon"..spellId
     else        
-        return "nil"
+        return nil
     end
 end
 
