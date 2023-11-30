@@ -365,6 +365,10 @@ function WowMock:DeleteFrames()
     end
 end
 
+function WowMock:SetMap(map)
+    self.currentMap = map
+end
+
 WowMock:Init()
 
 -- Versioning
@@ -383,7 +387,10 @@ end
 -- Map
 C_Map = {}
 function C_Map:GetMapInfo(mapID)
-    return mapID, "Zone", 3, 0, 0
+    local r = {}
+    r.parentMapID = 0
+    r.name = "Zone"
+    return r
 end
 
 function C_Map:GetAreaInfo(mapID)

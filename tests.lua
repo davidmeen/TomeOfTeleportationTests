@@ -14,10 +14,14 @@ Item_DarkPortal = 93672
 Item_FireEatersHearthstone = 166746
 Item_EternalTravelersHearthstone = 172179
 Item_TimewalkersHearthstone = 193588
+Item_KirinTorBeacon = 95567
 
 Spell_AstralRecall = 556
 Spell_TeleportOrgrimmar = 3567
 Spell_PathOfHeartsBane = 424167
+Spell_PathOfTheVigilant = 159897
+Spell_PathOfArcaneSecrets = 393279
+Spell_PathOfTheSettingSun = 131225
 
 Fixture = {}
 

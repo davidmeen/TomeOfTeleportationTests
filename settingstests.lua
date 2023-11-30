@@ -1,10 +1,14 @@
+local FullDungeonTeleportName = "Path of Heart's Bane"
+local ShortDungeonTeleportName = " Heart's Bane"    -- Bug! This shouldn't have the space.
+local DungeonName = "Waycrest Manor"
+
 local function AddItemsOfEachType()
     WowMock:AddItem(Item_ScrollOfTownPortal, nil, "Scroll of Town Portal")
     WowMock:AddItem(Item_ScrollOfTownPortal, nil, "Scroll of Town Portal")
     WowMock:AddItem(Item_Atiesh, nil, "Atiesh Greatstaff of the Guardian")
     WowMock:AddToy(Toy_TomeOfTownPortal, nil, "Tome of Town Portal")
     WowMock:AddSpell(Spell_AstralRecall, "Astral Recall")
-    WowMock:AddSpell(Spell_PathOfHeartsBane, "Path of Heart's Bane")
+    WowMock:AddSpell(Spell_PathOfHeartsBane, FullDungeonTeleportName)
 end
 
 AddTests(
@@ -158,4 +162,83 @@ AddTests(
         f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_AstralRecall), nil, "Spell should be visible")        
         f:TestEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane), nil, "Dungeon spell should not be visible")        
     end,
+    ["KnowDungeonSpell_OpenFrame_NameIsTruncated"] = function(f)
+        WowMock:AddSpell(Spell_PathOfHeartsBane, FullDungeonTeleportName)
+        
+        TeleporterOpenFrame()
+
+        local button = TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane)
+        f:TestEquals(button.displaySpellName, ShortDungeonTeleportName, "Spell name should be truncated")
+    end,
+    ["ShowDungeonNamesEnabled_OpenFrame_NameIsTruncated"] = function(f)
+        TomeOfTele_Options["showDungeonNames"] = true
+        WowMock:AddSpell(Spell_PathOfHeartsBane, FullDungeonTeleportName)
+        
+        TeleporterOpenFrame()
+
+        local button = TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane)
+        f:TestEquals(button.displaySpellName, DungeonName, "Should display dungeon name")
+    end,
+    ["GroupDungeonsDisabled_OpenFrame_EachDungeonIsInItsOwnSection"] = function(f)
+        WowMock:AddSpell(Spell_PathOfHeartsBane)
+        WowMock:AddSpell(Spell_PathOfTheVigilant)
+        WowMock:AddSpell(Spell_PathOfArcaneSecrets)
+        WowMock:AddSpell(Spell_PathOfTheSettingSun)
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(#f:FindZoneLabels(), 4, "Each spell should have its own section")
+    end,
+    ["GroupDungeonsEnabled_OpenFrame_EachDungeonIsInItsOwnSection"] = function(f)
+        TomeOfTele_Options["groupDungeons"] = true
+
+        WowMock:AddSpell(Spell_PathOfHeartsBane)
+        WowMock:AddSpell(Spell_PathOfTheVigilant)
+        WowMock:AddSpell(Spell_PathOfArcaneSecrets)
+        WowMock:AddSpell(Spell_PathOfTheSettingSun)
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(#f:FindZoneLabels(), 1, "Spells should be grouped")
+    end,
+    ["GroupDungeonsEnabledWithNonDungeonSpells_OpenFrame_OnlyDungeonSpellsAreGrouped"] = function(f)
+        TomeOfTele_Options["groupDungeons"] = true
+
+        WowMock:AddSpell(Spell_PathOfHeartsBane)
+        WowMock:AddSpell(Spell_PathOfTheVigilant)
+        WowMock:AddSpell(Spell_PathOfArcaneSecrets)
+        WowMock:AddSpell(Spell_PathOfTheSettingSun)
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(#f:FindZoneLabels(), 2, "Only dungeon spells should be grouped")
+    end, 
+    ["SpellHasZoneRestrictionAndPlayerInWrongZone_OpenFrame_SpellIsNotVisible"] = function(f)
+        WowMock:AddItem(Item_KirinTorBeacon)
+        WowMock:SetMap(100)
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(#f.FindButtons(), 0, "Button should not be visible")
+    end,
+    ["SpellHasZoneRestrictionAndPlayerInRightZone_OpenFrame_SpellIsVisible"] = function(f)
+        WowMock:AddItem(Item_KirinTorBeacon)
+        WowMock:SetMap(504) -- MapIDIsleOfThunder in Spells.lua
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(#f.FindButtons(), 1, "Button should be visible")
+    end,
+    ["ShowInWrongZoneEnabledAndPlayerInWrongZone_OpenFrame_SpellIsNotVisible"] = function(f)
+        TomeOfTele_Options["showInWrongZone"] = true
+        WowMock:AddItem(Item_KirinTorBeacon)
+        WowMock:SetMap(100)
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(#f.FindButtons(), 1, "Button should be visible")
+    end
 })
+
+-- No test for seasonOnly because it keeps changing. I'll add one if I find an API to query it
