@@ -23,6 +23,10 @@ setmetatable(LibStub, { __call = LibStub.GetLibrary })
 -- Utilities
 tinsert = table.insert
 
+strfind = string.find
+strlen = string.len
+strsub = string.sub
+
 function GetTime()
     return WowMock.time
 end

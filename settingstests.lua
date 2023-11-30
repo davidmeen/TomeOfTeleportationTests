@@ -1,3 +1,12 @@
+local function AddItemsOfEachType()
+    WowMock:AddItem(Item_ScrollOfTownPortal, nil, "Scroll of Town Portal")
+    WowMock:AddItem(Item_ScrollOfTownPortal, nil, "Scroll of Town Portal")
+    WowMock:AddItem(Item_Atiesh, nil, "Atiesh Greatstaff of the Guardian")
+    WowMock:AddToy(Toy_TomeOfTownPortal, nil, "Tome of Town Portal")
+    WowMock:AddSpell(Spell_AstralRecall, "Astral Recall")
+    WowMock:AddSpell(Spell_PathOfHeartsBane, "Path of Heart's Bane")
+end
+
 AddTests(
 { 
     ["RandomHearthstoneEnabled_OpenFrame_OnlyOneHearthstoneShown"]  = function(f)
@@ -96,5 +105,57 @@ AddTests(
 
         succeeded = succeded and startSpell == endSpell
         f:TestEqualsKnownFailure(succeeded, true, "The selected hearthstone should not change")
+    end,
+    ["HideItemsEnabled_OpenFrame_DoesNotShowItems"]  = function(f)
+        TomeOfTele_Options["hideItems"] = true
+        AddItemsOfEachType()
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(#f:FindButtons(), 2, "Correct number of buttons should be visible")
+        f:TestEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_ScrollOfTownPortal), nil, "Consumable should not be visible")
+        f:TestEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh), nil, "Item should not be visible")
+        f:TestEquals(TeleporterTest_GetButtonSettingsFromItemId(Toy_TomeOfTownPortal), nil, "Toy should not be visible")
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_AstralRecall), nil, "Spell should be visible")        
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane), nil, "Dungeon spell should be visible")        
+    end,
+    ["HideConsumablesEnabled_OpenFrame_DoesNotShowConsumables"]  = function(f)
+        TomeOfTele_Options["hideConsumable"] = true
+        AddItemsOfEachType()
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(#f:FindButtons(), 4, "Correct number of buttons should be visible")
+        f:TestEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_ScrollOfTownPortal), nil, "Consumable should not be visible")
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh), nil, "Item should be visible")
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Toy_TomeOfTownPortal), nil, "Toy should be visible")
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_AstralRecall), nil, "Spell should be visible")        
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane), nil, "Dungeon spell should be visible")        
+    end,
+    ["HideSpellsEnabled_OpenFrame_DoesNotShowSpells"]  = function(f)
+        TomeOfTele_Options["hideSpells"] = true
+        AddItemsOfEachType()
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(#f:FindButtons(), 4, "Correct number of buttons should be visible")
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_ScrollOfTownPortal), nil, "Consumable should be visible")
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh), nil, "Item should be visible")
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Toy_TomeOfTownPortal), nil, "Toy should be visible")
+        f:TestEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_AstralRecall), nil, "Spell should not be visible")        
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane), nil, "Dungeon spell should be visible")        
+    end,
+    ["HideChallengeEnabled_OpenFrame_DoesNotShowDungeonSpells"]  = function(f)
+        TomeOfTele_Options["hideChallenge"] = true
+        AddItemsOfEachType()
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(#f:FindButtons(), 4, "Correct number of buttons should be visible")
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_ScrollOfTownPortal), nil, "Consumable should be visible")
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh), nil, "Item should be visible")
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Toy_TomeOfTownPortal), nil, "Toy should be visible")
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_AstralRecall), nil, "Spell should be visible")        
+        f:TestEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane), nil, "Dungeon spell should not be visible")        
     end,
 })

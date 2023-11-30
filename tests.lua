@@ -17,7 +17,7 @@ Item_TimewalkersHearthstone = 193588
 
 Spell_AstralRecall = 556
 Spell_TeleportOrgrimmar = 3567
-
+Spell_PathOfHeartsBane = 424167
 
 Fixture = {}
 
@@ -58,6 +58,13 @@ end
 function Fixture:TestEquals(v1, v2, text)
     if v1 ~= v2 then
         print(self.name .. " \"" .. text .. "\" failed. " .. tostring(v1) .. " does not equal " .. tostring(v2) .. ".")
+        self.result = false
+    end
+end
+
+function Fixture:TestNotEquals(v1, v2, text)
+    if v1 == v2 then
+        print(self.name .. " \"" .. text .. "\" failed. " .. tostring(v1) .. " equals " .. tostring(v2) .. ".")
         self.result = false
     end
 end
