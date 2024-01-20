@@ -131,4 +131,33 @@ AddTests(
         local hearthCooldownLength = TeleporterTest_GetButtonSettingsFromItemId(Item_Hearthstone).cooldownbar:GetWidth() - hiddenLength
         f:TestEquals(hearthCooldownLength, 0, "Cooldown bar should be hidden")
     end, 
+    ["PlayerHasUnloadedItem_OpenFrame_LoadingIsDisplayedUntilItIsLoaded"]  = function(f)
+        WowMock:AddItem(Item_DarkPortal)
+        WowMock:SetItemLoaded(Item_DarkPortal, false)
+
+        TeleporterOpenFrame()
+        
+        WowMock:Tick(1)        
+        local darkPortalButton = TeleporterTest_GetButtonSettingsFromItemId(Item_DarkPortal)
+        f:TestEquals(darkPortalButton.displaySpellName, "<Loading>")
+
+        WowMock:SetItemLoaded(Item_DarkPortal, true)
+        WowMock:Tick(1)
+        local darkPortalButton = TeleporterTest_GetButtonSettingsFromItemId(Item_DarkPortal)
+        f:TestNotEquals(darkPortalButton.displaySpellName, "<Loading>")
+    end,
+    ["ItemDoesNotExist_OpenFrameThenWait_DoesNotKeepRefreshing"]  = function(f)
+        WowMock:SetItemLoaded(Item_DarkPortal, false)
+        WowMock:AddItem(Item_Hearthstone)
+
+        TeleporterOpenFrame()
+        
+        WowMock:Tick(1)
+        local buttonFrame1 = TeleporterTest_GetButtonSettingsFromItemId(Item_Hearthstone)
+
+        WowMock:Tick(1)
+        local buttonFrame2 = TeleporterTest_GetButtonSettingsFromItemId(Item_Hearthstone)
+
+        f:TestEquals(buttonFrame1, buttonFrame2, "Button should not have refreshed")
+    end,
 })

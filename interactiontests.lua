@@ -187,6 +187,6 @@ AddTests(
         WowMock:ClickFrame(atieshButton.frame)
         f:TestEquals(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
         WowMock:Tick(1)
-        f:TestEqualsKnownFailure(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
+        f:TestEquals(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
     end,
 })

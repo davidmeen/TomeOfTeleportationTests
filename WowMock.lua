@@ -418,6 +418,10 @@ function UnitClass()
     return WowMock.unitClass
 end
 
+function UnitRace()
+    return WowMock.unitRace
+end
+
 function IsEquippableItem(itemId)
     if WowMock.itemEquipLoc[WowMock:GetItemIdFromName(itemId)] then
         return true
