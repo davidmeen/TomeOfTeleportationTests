@@ -100,4 +100,35 @@ AddTests(
         local tomeCooldownLength = TeleporterTest_GetButtonSettingsFromItemId(Toy_TomeOfTownPortal).cooldownbar:GetWidth() - hiddenLength
         f:TestEquals(hearthCooldownLength / 2, tomeCooldownLength, "Cooldown bar should be proportional to time remaining")
     end, 
+    ["TimeWrappedAround_OpenFrame_CooldownBarWidthIsProportialToTimeRemaining"] = function(f)
+        WowMock:SetTime(2000)
+
+        WowMock:AddItem(Item_Hearthstone)
+        -- Time wrapped 1/4 of way through cooldown. Started at -1000, it's 2000 now, so 3/4 done, i.e. bar is 1/4 length.
+        WowMock:SetItemCooldown(Item_Hearthstone, 4294967295 / 1000.0 - 1000, 4000)
+
+        -- Half full bar for comparison.
+        WowMock:AddToy(Toy_TomeOfTownPortal)
+        WowMock:SetItemCooldown(Toy_TomeOfTownPortal, GetTime() - 2, 4)
+        
+        TeleporterOpenFrame()
+
+        local hiddenLength = TeleporterGetOption("cooldownBarInset") * 2
+        local hearthCooldownLength = TeleporterTest_GetButtonSettingsFromItemId(Item_Hearthstone).cooldownbar:GetWidth() - hiddenLength
+        local tomeCooldownLength = TeleporterTest_GetButtonSettingsFromItemId(Toy_TomeOfTownPortal).cooldownbar:GetWidth() - hiddenLength
+        f:TestEquals(hearthCooldownLength, tomeCooldownLength / 2, "Cooldown bar should be proportional to time remaining")
+    end, 
+    ["CooldownStartedInFuture_OpenFrame_CooldownBarIsHidden"] = function(f)
+        -- This happens the first time you query the Death Gate timer if you're not a Death Knight, which only happens if you use /tele debug.
+        WowMock:SetTime(2000)
+
+        WowMock:AddItem(Item_Hearthstone)
+        WowMock:SetItemCooldown(Item_Hearthstone, 5000, 4000)
+        
+        TeleporterOpenFrame()
+
+        local hiddenLength = TeleporterGetOption("cooldownBarInset") * 2
+        local hearthCooldownLength = TeleporterTest_GetButtonSettingsFromItemId(Item_Hearthstone).cooldownbar:GetWidth() - hiddenLength
+        f:TestEquals(hearthCooldownLength, 0, "Cooldown bar should be hidden")
+    end, 
 })
