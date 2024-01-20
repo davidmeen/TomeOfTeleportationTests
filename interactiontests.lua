@@ -42,8 +42,6 @@ AddTests(
 
         WowMock:ClickFrame(f:FindButtons()[1])
 
-        f:TestEquals(TeleporterFrame:IsVisible(), true, "Frame should be open")
-        WowMock:Tick(1)
         f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")
     end,
     ["HaveSpell_ClickButton_SpellIsUsed"] = function(f)
@@ -62,9 +60,8 @@ AddTests(
 
         WowMock:ClickFrame(f:FindButtons()[1])
 
-        f:TestEquals(TeleporterFrame:IsVisible(), true, "Frame should be open")
-        WowMock:Tick(1)
         f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")
+        WowMock:Tick(1)        
     end,
     ["HaveToy_ClickButton_ToyIsUsed"] = function(f)
         WowMock:AddToy(Toy_TomeOfTownPortal)
@@ -82,9 +79,8 @@ AddTests(
 
         WowMock:ClickFrame(f:FindButtons()[1])
 
-        f:TestEquals(TeleporterFrame:IsVisible(), true, "Frame should be open")
-        WowMock:Tick(1)
         f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")
+        WowMock:Tick(1)        
     end,
     ["HaveEquipableItemUnequiped_ClickButton_ItemIsEquiped"] = function(f)
         WowMock:AddItem(Item_Atiesh)
@@ -106,6 +102,7 @@ AddTests(
 
         WowMock:ClickFrame(f:FindButtons()[1])
 
+        f:TestEquals(TeleporterFrame:IsVisible(), true, "Frame should be open")
         f:TestEquals(WowMock:IsUsingItem(Item_Atiesh), true, "Should be using Atiesh")
     end,
     ["HaveEquipableItemUnequiped_ClickButtonTwice_ItemIsUsedAndClosesFrameAndUnequips"] = function(f)

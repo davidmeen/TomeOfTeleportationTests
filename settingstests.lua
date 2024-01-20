@@ -264,7 +264,43 @@ AddTests(
         TeleporterOpenFrame()
 
         f:TestEquals(#f.FindButtons(), 1, "Button should be visible")
-    end
+    end,
+    ["CloseAfterCastEnabled_ClickSpellButtonAndTimePasses_FrameStaysOpenUntilEnd"] = function(f)
+        TomeOfTele_Options["closeAfterCast"] = true
+        WowMock:AddSpell(Spell_AstralRecall)
+        
+        TeleporterOpenFrame()
+
+        WowMock:ClickFrame(f:FindButtons()[1])
+
+        f:TestEquals(TeleporterFrame:IsVisible(), true, "Frame should be open")
+        WowMock:Tick(1)
+        f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")
+    end,
+    ["CloseAfterCastEnabled_ClickToyButtonAndTimePasses_FrameStaysOpenUntilEnd"] = function(f)
+        TomeOfTele_Options["closeAfterCast"] = true
+        WowMock:AddToy(Toy_TomeOfTownPortal)
+        
+        TeleporterOpenFrame()
+
+        WowMock:ClickFrame(f:FindButtons()[1])
+
+        f:TestEquals(TeleporterFrame:IsVisible(), true, "Frame should be open")
+        WowMock:Tick(1)
+        f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")
+    end,
+    ["CloseAfterCastEnabled_ClickItemButtonAndTimePasses_FrameIsClosed"] = function(f)
+        TomeOfTele_Options["closeAfterCast"] = true
+        WowMock:AddItem(Item_Hearthstone)
+        
+        TeleporterOpenFrame()
+
+        WowMock:ClickFrame(f:FindButtons()[1])
+
+        f:TestEquals(TeleporterFrame:IsVisible(), true, "Frame should be open")
+        WowMock:Tick(1)
+        f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")  
+    end,
 })
 
 -- No test for seasonOnly because it keeps changing. I'll add one if I find an API to query it
