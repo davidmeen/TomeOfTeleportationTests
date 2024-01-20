@@ -158,7 +158,7 @@ AddTests(
         TeleporterClose()  
         f:TestEquals(IsEquippedItem(Item_Atiesh), false, "Should have unequipped Atiesh")
         f:TestEquals(IsEquippedItem(Item_MainHand), true, "Should have equipped main hand")
-        f:TestEqualsKnownFailure(IsEquippedItem(Item_OffHand), true, "Should have equipped off hand")
+        f:TestEquals(IsEquippedItem(Item_OffHand), true, "Should have equipped off hand")
         f:TestEquals(WowMock:BagContains(Item_Atiesh, BagIndex), true, "Atiesh should have been placed back in its original bag")
     end,
     ["AllSpellsLoaded_EquippableItemButtonClickedThenWait_ItemStaysEquipped"]  = function(f)

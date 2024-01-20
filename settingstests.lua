@@ -26,6 +26,32 @@ AddTests(
         f:TestEquals(#f:FindButtons(), 1, "There should be 1 button")
         f:TestEquals(#f:FindZoneLabels(), 1, "There should be 1 zone label")
     end,
+    ["RandomHearthstoneEnabled_OpenFrameMultipleTimes_SelectedItemIsNotAlwaysTheSame"]  = function(f)
+        TomeOfTele_Options["randomHearth"] = true
+        WowMock:AddItem(Item_ScrollOfTownPortal)
+        WowMock:AddToy(Toy_TomeOfTownPortal)
+        WowMock:AddToy(Item_DarkPortal)
+        WowMock:AddToy(Item_FireEatersHearthstone)
+        WowMock:AddToy(Item_EternalTravelersHearthstone)
+        WowMock:AddToy(Item_TimewalkersHearthstone)
+
+        TeleporterOpenFrame()
+
+        local alwaysSame = true
+
+        WowMock:Tick(1)
+
+        for i = 1, 10, 1 do
+            local spell1 = TeleporterTest_GetButtonSettings()[1].spellId
+            TeleporterClose()
+            WowMock:Tick(1)
+            TeleporterOpenFrame()
+            local spell2 = TeleporterTest_GetButtonSettings()[1].spellId
+            alwaysSame = alwaysSame and spell1 == spell2
+        end        
+        
+        f:TestEquals(alwaysSame, false, "The selected hearthstone should change")
+    end,
     ["RandomHearthstoneEnabled_OpenFrame_AstralRecallShownSeparately"]  = function(f)
         TomeOfTele_Options["randomHearth"] = true
         WowMock:AddItem(Item_ScrollOfTownPortal)
@@ -99,7 +125,7 @@ AddTests(
             local spell1 = TeleporterTest_GetButtonSettings()[1].spellId
             WowMock:Tick(1)
             local spell2 = TeleporterTest_GetButtonSettings()[1].spellId
-            succeeded = succeded and spell1 == spell2
+            succeeded = succeeded and spell1 == spell2
         end        
         
         local startSpell = TeleporterTest_GetButtonSettings()[1].spellId
@@ -107,8 +133,8 @@ AddTests(
         WowMock:Tick(1)
         local endSpell = TeleporterTest_GetButtonSettings()[1].spellId
 
-        succeeded = succeded and startSpell == endSpell
-        f:TestEqualsKnownFailure(succeeded, true, "The selected hearthstone should not change")
+        succeeded = succeeded and startSpell == endSpell        
+        f:TestEquals(succeeded, true, "The selected hearthstone should not change")
     end,
     ["HideItemsEnabled_OpenFrame_DoesNotShowItems"]  = function(f)
         TomeOfTele_Options["hideItems"] = true
