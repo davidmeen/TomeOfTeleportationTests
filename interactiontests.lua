@@ -186,4 +186,19 @@ AddTests(
         WowMock:Tick(1)
         f:TestEquals(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
     end,
+    ["HaveNothignEquipped_ClickButtonThenClose_PlacedBackInBag"] = function(f)
+        local BagIndex = 2
+        WowMock:AddItem(Item_Atiesh, BagIndex)
+        WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
+        f:TestEquals(WowMock:BagContains(Item_Atiesh, BagIndex), true, "Atiesh should be in bag 2")
+                
+        TeleporterOpenFrame()
+        
+        WowMock:ClickFrame(f:FindButtons()[1])
+        f:TestEquals(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
+                
+        TeleporterClose()  
+        f:TestEquals(IsEquippedItem(Item_Atiesh), false, "Should have unequipped Atiesh")
+        f:TestEquals(WowMock:BagContains(Item_Atiesh, BagIndex), true, "Atiesh should have been placed back in its original bag")
+    end,
 })
