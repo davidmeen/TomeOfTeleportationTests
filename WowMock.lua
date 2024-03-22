@@ -751,3 +751,14 @@ end
 function PlayerHasToy(itemId)
     return WowMock.knownToys[itemId]
 end
+
+-- Covenants
+C_Covenants = {}
+
+function WowMock:SetCovenant(covenant)
+    self.covenant = covenant
+end
+
+function C_Covenants:GetActiveCovenantID()
+    return WowMock.covenant
+end

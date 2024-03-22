@@ -2,6 +2,11 @@ local FullDungeonTeleportName = "Path of Heart's Bane"
 local ShortDungeonTeleportName = " Heart's Bane"    -- Bug! This shouldn't have the space.
 local DungeonName = "Waycrest Manor"
 
+local Item_NightFaeHearthstone = 180290
+local Item_NecrolordHearthstone = 182773
+local Item_VenthyrHearthstone = 183716
+local Item_KyrianHearthstone = 184353
+
 local function AddItemsOfEachType()
     WowMock:AddItem(Item_ScrollOfTownPortal, nil, "Scroll of Town Portal")
     WowMock:AddItem(Item_ScrollOfTownPortal, nil, "Scroll of Town Portal")
@@ -300,6 +305,61 @@ AddTests(
         f:TestEquals(TeleporterFrame:IsVisible(), true, "Frame should be open")
         WowMock:Tick(1)
         f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")  
+    end,
+    ["AllCovenantsNotEnabledAndRandomHearthEnabled_OpenFrameMultipleTimes_AlwaysSelectOwnCovenant"]  = function(f)
+        TomeOfTele_Options["randomHearth"] = true
+
+        WowMock:AddToy(Item_NightFaeHearthstone)
+        WowMock:AddToy(Item_NecrolordHearthstone)
+        WowMock:AddToy(Item_VenthyrHearthstone)
+        WowMock:AddToy(Item_KyrianHearthstone)
+
+        WowMock:SetCovenant(1)  -- Kyrian
+
+        local alwaysCovenant = true
+
+        WowMock:Tick(1)
+
+        for i = 1, 10, 1 do
+            TeleporterOpenFrame()
+            alwaysCovenant = alwaysCovenant and TeleporterTest_GetButtonSettings()[1].spellId == Item_KyrianHearthstone
+            TeleporterClose()
+        end        
+        
+        f:TestEquals(alwaysCovenant, true, "The selected hearthstone should always be from the current covenant")
+    end,
+    ["AllCovenantsEnabledAndRandomHearthEnabled_OpenFrameMultipleTimes_DontAlwaysSelectOwnCovenant"]  = function(f)
+        TomeOfTele_Options["randomHearth"] = true
+        TomeOfTele_Options["allCovenants"] = true
+
+        WowMock:AddToy(Item_NightFaeHearthstone)
+        WowMock:AddToy(Item_NecrolordHearthstone)
+        WowMock:AddToy(Item_VenthyrHearthstone)
+        WowMock:AddToy(Item_KyrianHearthstone)
+
+        WowMock:SetCovenant(1)  -- Kyrian
+
+        local alwaysCovenant = true
+
+        WowMock:Tick(1)
+
+        for i = 1, 10, 1 do
+            TeleporterOpenFrame()
+            alwaysCovenant = alwaysCovenant and TeleporterTest_GetButtonSettings()[1].spellId == Item_KyrianHearthstone
+            TeleporterClose()
+        end        
+        
+        f:TestEquals(alwaysCovenant, false, "The selected hearthstone should not always be from the current covenant")
+    end,
+    ["AllCovenantsNotEnabledAndRandomHearthNotEnabled_OpenFrame_AllCovenantsVisible"]  = function(f)
+        WowMock:AddToy(Item_NightFaeHearthstone)
+        WowMock:AddToy(Item_NecrolordHearthstone)
+        WowMock:AddToy(Item_VenthyrHearthstone)
+        WowMock:AddToy(Item_KyrianHearthstone)
+
+        TeleporterOpenFrame()
+        
+        f:TestEquals(#TeleporterTest_GetButtonSettings(), 4, "There should be a button for each covenant")
     end,
 })
 
