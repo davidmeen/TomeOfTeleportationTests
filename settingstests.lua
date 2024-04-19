@@ -2,6 +2,8 @@ local FullDungeonTeleportName = "Path of Heart's Bane"
 local ShortDungeonTeleportName = " Heart's Bane"    -- Bug! This shouldn't have the space.
 local DungeonName = "Waycrest Manor"
 
+local Zone_AstralRecall = "1 Astral Recall"
+
 local Item_NightFaeHearthstone = 180290
 local Item_NecrolordHearthstone = 182773
 local Item_VenthyrHearthstone = 183716
@@ -360,6 +362,54 @@ AddTests(
         TeleporterOpenFrame()
         
         f:TestEquals(#TeleporterTest_GetButtonSettings(), 4, "There should be a button for each covenant")
+    end,
+    ["SpellIsHidden_OpenFrame_HasNoButtonForSpell"] = function(f)
+        WowMock:AddSpell(Spell_AstralRecall, "Astral Recall")
+        local spell = {}
+        spell.spellType = ST_Item
+        spell.spellId = Spell_AstralRecall
+        spell.zone = Zone_AstralRecall
+        
+        TeleporterSetSpellHidden(spell)
+        TeleporterOpenFrame()
+
+        f:TestEquals(#TeleporterTest_GetButtonSettings(), 0, "There should be no buttons")
+    end,
+    ["SpellIsHiddenThenVisible_OpenFrame_HasButtonForSpell"] = function(f)
+        WowMock:AddSpell(Spell_AstralRecall, "Astral Recall")
+        local spell = {}
+        spell.spellType = ST_Item
+        spell.spellId = Spell_AstralRecall
+        spell.zone = Zone_AstralRecall
+        
+        TeleporterSetSpellHidden(spell)
+        TeleporterSetSpellVisible(spell)
+        TeleporterOpenFrame()
+
+        f:TestEquals(#TeleporterTest_GetButtonSettings(), 1, "There should be a button")
+    end,
+    ["SpellIsNotKnownAndAlwaysVisible_OpenFrame_HasButtonForSpell"] = function(f)
+        local spell = {}
+        spell.spellType = ST_Item
+        spell.spellId = Spell_AstralRecall
+        spell.zone = Zone_AstralRecall
+        
+        TeleporterSetSpellAlwaysVisible(spell)
+        TeleporterOpenFrame()
+
+        f:TestEquals(#TeleporterTest_GetButtonSettings(), 1, "There should be a button")
+    end,
+    ["SpellIsNotKnownAndAlwaysVisibleThenJustVisible_OpenFrame_HasNoButtonForSpell"] = function(f)
+        local spell = {}
+        spell.spellType = ST_Item
+        spell.spellId = Spell_AstralRecall
+        spell.zone = Zone_AstralRecall
+        
+        TeleporterSetSpellAlwaysVisible(spell)
+        TeleporterSetSpellVisible(spell)
+        TeleporterOpenFrame()
+
+        f:TestEquals(#TeleporterTest_GetButtonSettings(), 0, "There should not be a button")
     end,
 })
 
