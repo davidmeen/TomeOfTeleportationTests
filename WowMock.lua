@@ -495,6 +495,10 @@ function Frame:SetHeight(h)
     self.height = h
 end
 
+function Frame:GetHeight()
+    return self.height
+end
+
 function Frame:SetFont(font)
     self.font = font;
 end
@@ -581,6 +585,9 @@ function Frame:SetOnHide(hide)
     self.onHide = hide
 end
 
+function Frame:SetScrollChild()
+end
+
 function CreateFrame(frameType, name, parent, template, id)
     local frame = {}
     frame.frameType = frameType
@@ -611,10 +618,15 @@ end
 CreateFrame("Frame", "UIParent")
 CreateFrame("FontString", "FontString")
 CreateFrame("FontString", "GameFontNormalSmall", nil, "FontString")
+CreateFrame("FontString", "GameFontNormal", nil, "FontString")
 CreateFrame("FontString", "SystemFont_Outline_Small", nil, "FontString")
 CreateFrame("Button", "UIPanelButtonTemplate")
 CreateFrame("Button", "InsecureActionButtonTemplate")
 CreateFrame("Frame", "BackdropTemplate")
+CreateFrame("Frame", "UIPanelScrollFrameTemplate")
+CreateFrame("Frame", "UIDropDownMenuTemplate")
+CreateFrame("Frame", "UICheckButtonTemplate")
+CreateFrame("Frame", "OptionsSliderTemplate")
 
 function UIPanelButtonTemplate:Construct()
     self:CreateFontString(self.name.."Text", nil, "GameFontNormalSmall")
@@ -626,6 +638,9 @@ function GameFontNormalSmall:GetStringWidth()
     else   
         return 0
     end
+end
+
+function FontString:GetFont()
 end
 
 -- Items
@@ -761,4 +776,25 @@ end
 
 function C_Covenants:GetActiveCovenantID()
     return WowMock.covenant
+end
+
+-- Drop down
+function UIDropDownMenu_Initialize()
+end
+
+-- Slider
+
+function OptionsSliderTemplate:SetMinMaxValues()
+end
+
+function OptionsSliderTemplate:SetValueStep()
+end
+
+function OptionsSliderTemplate:SetObeyStepOnDrag()
+end
+
+function OptionsSliderTemplate:Enable()
+end
+
+function OptionsSliderTemplate:SetOrientation()
 end
