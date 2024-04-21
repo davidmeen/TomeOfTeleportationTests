@@ -365,48 +365,36 @@ AddTests(
     end,
     ["SpellIsHidden_OpenFrame_HasNoButtonForSpell"] = function(f)
         WowMock:AddSpell(Spell_AstralRecall, "Astral Recall")
-        local spell = {}
-        spell.spellType = ST_Item
-        spell.spellId = Spell_AstralRecall
-        spell.zone = Zone_AstralRecall
+        local spell = TeleporterCreateItem(Spell_AstralRecall, Zone_AstralRecall)
         
-        TeleporterSetSpellHidden(spell)
+        spell:SetHidden()
         TeleporterOpenFrame()
 
         f:TestEquals(#TeleporterTest_GetButtonSettings(), 0, "There should be no buttons")
     end,
     ["SpellIsHiddenThenVisible_OpenFrame_HasButtonForSpell"] = function(f)
         WowMock:AddSpell(Spell_AstralRecall, "Astral Recall")
-        local spell = {}
-        spell.spellType = ST_Item
-        spell.spellId = Spell_AstralRecall
-        spell.zone = Zone_AstralRecall
+        local spell = TeleporterCreateItem(Spell_AstralRecall, Zone_AstralRecall)
         
-        TeleporterSetSpellHidden(spell)
-        TeleporterSetSpellVisible(spell)
+        spell:SetHidden()
+        spell:SetVisible()
         TeleporterOpenFrame()
 
         f:TestEquals(#TeleporterTest_GetButtonSettings(), 1, "There should be a button")
     end,
     ["SpellIsNotKnownAndAlwaysVisible_OpenFrame_HasButtonForSpell"] = function(f)
-        local spell = {}
-        spell.spellType = ST_Item
-        spell.spellId = Spell_AstralRecall
-        spell.zone = Zone_AstralRecall
+        local spell = TeleporterCreateItem(Spell_AstralRecall, Zone_AstralRecall)
         
-        TeleporterSetSpellAlwaysVisible(spell)
+        spell:SetAlwaysVisible()
         TeleporterOpenFrame()
 
         f:TestEquals(#TeleporterTest_GetButtonSettings(), 1, "There should be a button")
     end,
     ["SpellIsNotKnownAndAlwaysVisibleThenJustVisible_OpenFrame_HasNoButtonForSpell"] = function(f)
-        local spell = {}
-        spell.spellType = ST_Item
-        spell.spellId = Spell_AstralRecall
-        spell.zone = Zone_AstralRecall
+        local spell = TeleporterCreateItem(Spell_AstralRecall, Zone_AstralRecall)
         
-        TeleporterSetSpellAlwaysVisible(spell)
-        TeleporterSetSpellVisible(spell)
+        spell:SetAlwaysVisible()
+        spell:SetVisible()
         TeleporterOpenFrame()
 
         f:TestEquals(#TeleporterTest_GetButtonSettings(), 0, "There should not be a button")

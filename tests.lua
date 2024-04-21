@@ -1,5 +1,6 @@
 local AddonFolder = arg[1] or "C:/World of Warcraft/_retail_/Interface/Addons/TomeOfTeleportation/"
 dofile("WowMock.lua")
+dofile(AddonFolder .. "TeleporterSpell.lua")
 dofile(AddonFolder .. "TomeOfTeleportation.lua")
 dofile(AddonFolder .. "Spells.lua")
 dofile(AddonFolder .. "TomeQuickMenu.lua")
