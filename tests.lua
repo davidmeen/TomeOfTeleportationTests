@@ -16,6 +16,7 @@ Item_FireEatersHearthstone = 166746
 Item_EternalTravelersHearthstone = 172179
 Item_TimewalkersHearthstone = 193588
 Item_KirinTorBeacon = 95567
+Item_WormholeGeneratorZandalar = 168808
 
 Spell_AstralRecall = 556
 Spell_TeleportOrgrimmar = 3567
@@ -23,6 +24,7 @@ Spell_PathOfHeartsBane = 424167
 Spell_PathOfTheVigilant = 159897
 Spell_PathOfArcaneSecrets = 393279
 Spell_PathOfTheSettingSun = 131225
+Spell_Camp = 312372
 
 Fixture = {}
 
@@ -132,7 +134,7 @@ local numFailed = 0
 
 for name, testFunction in pairs(Tests) do
     -- TODO: On a switch
-    --local runOnly1 = "RandomHearthstoneEnabled_OpenFrameAndWait_SelectedItemDoesNotChange"
+    --local runOnly1 = "RandomHearthstoneEnabled_OpenFrameMultipleTimes_SelectedItemIsNotAlwaysTheSame"
     --local runOnly2 = "HaveEquipableItemUnequiped_ClickButtonTwice_ItemIsUsedAndClosesFrameAndUnequips"    
     if not runOnly1 or name == runOnly1 or name == runOnly2 then
         --print(name)

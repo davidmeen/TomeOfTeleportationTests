@@ -386,18 +386,23 @@ end
 
 -- Map
 C_Map = {}
-function C_Map:GetMapInfo(mapID)
+function C_Map.GetMapInfo(mapID)
     local r = {}
     r.parentMapID = 0
-    r.name = "Zone"
+    local mapNames = {
+        [85] = "Orgrimmar",
+        [875] = "Zandalar",
+        [424167] = "Waycrest Manor"
+    }
+    r.name = mapNames[mapID] or "Zone" .. mapID
     return r
 end
 
-function C_Map:GetAreaInfo(mapID)
+function C_Map.GetAreaInfo(mapID)
     return "zone"
 end
 
-function C_Map:GetBestMapForUnit()
+function C_Map.GetBestMapForUnit()
     return WowMock.currentMap
 end
 

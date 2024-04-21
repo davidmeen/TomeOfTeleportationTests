@@ -399,6 +399,91 @@ AddTests(
 
         f:TestEquals(#TeleporterTest_GetButtonSettings(), 0, "There should not be a button")
     end,
+    ["SortByDestination_OpenFrame_SortedCorrectly"] = function(f)
+        WowMock:AddToy(Item_NightFaeHearthstone)         
+        WowMock:AddSpell(Spell_Camp)                  
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)  
+        WowMock:AddItem(Item_WormholeGeneratorZandalar) 
+
+        TeleporterSetOption("sort", 1)
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(TeleporterTest_GetButtonSettings()[1].spellId, Item_NightFaeHearthstone, "Item 1 sorted correctly")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[2].spellId, Spell_Camp, "Item 2 sorted correctly")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[3].spellId, Spell_TeleportOrgrimmar, "Item 3 sorted correctly")        
+        f:TestEquals(TeleporterTest_GetButtonSettings()[4].spellId, Item_WormholeGeneratorZandalar, "Item 4 sorted correctly")
+    end,
+    ["SortByType_OpenFrame_SortedCorrectly"] = function(f)
+        WowMock:AddToy(Item_NightFaeHearthstone)         
+        WowMock:AddSpell(Spell_Camp)                
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)       
+        WowMock:AddItem(Item_WormholeGeneratorZandalar)
+
+        TeleporterSetOption("sort", 2)
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(TeleporterTest_GetButtonSettings()[1].spellId, Item_NightFaeHearthstone, "Item 1 sorted correctly")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[2].spellId, Item_WormholeGeneratorZandalar, "Item 2 sorted correctly")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[3].spellId, Spell_Camp, "Item 3 sorted correctly")        
+        f:TestEquals(TeleporterTest_GetButtonSettings()[4].spellId, Spell_TeleportOrgrimmar, "Item 4 sorted correctly")
+    end,
+    ["SortCustom_NoCustomisations_SortedCorrectly"] = function(f)
+        WowMock:AddToy(Item_NightFaeHearthstone)         
+        WowMock:AddSpell(Spell_Camp)                  
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)  
+        WowMock:AddItem(Item_WormholeGeneratorZandalar) 
+
+        TeleporterSetOption("sort", 3)
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(TeleporterTest_GetButtonSettings()[1].spellId, Item_NightFaeHearthstone, "Item 1 sorted correctly")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[2].spellId, Spell_Camp, "Item 2 sorted correctly")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[3].spellId, Spell_TeleportOrgrimmar, "Item 3 sorted correctly")        
+        f:TestEquals(TeleporterTest_GetButtonSettings()[4].spellId, Item_WormholeGeneratorZandalar, "Item 4 sorted correctly")
+    end,
+    ["SortCustom_MoveSpellBefore_SortedCorrectly"] = function(f)
+        WowMock:AddToy(Item_NightFaeHearthstone)         
+        WowMock:AddSpell(Spell_Camp)                  
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)  
+        WowMock:AddItem(Item_WormholeGeneratorZandalar) 
+
+        TeleporterSetOption("sort", 3)
+        TeleporterResetSort()
+
+        local WormholeSpell = TeleporterCreateItem(Item_WormholeGeneratorZandalar, "Zandalar")
+        local CampSpell = TeleporterCreateSpell(Spell_Camp, "Camp")
+        TeleporterMoveSpellBefore(WormholeSpell, CampSpell)        
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(TeleporterTest_GetButtonSettings()[1].spellId, Item_NightFaeHearthstone, "Item 1 sorted correctly")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[2].spellId, Item_WormholeGeneratorZandalar, "Item 2 sorted correctly")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[3].spellId, Spell_Camp, "Item 3 sorted correctly")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[4].spellId, Spell_TeleportOrgrimmar, "Item 4 sorted correctly")        
+    end,
+    ["SortCustom_MoveSpellBelow_SortedCorrectly"] = function(f)
+        WowMock:AddToy(Item_NightFaeHearthstone)         
+        WowMock:AddSpell(Spell_Camp)                  
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)  
+        WowMock:AddItem(Item_WormholeGeneratorZandalar) 
+
+        TeleporterSetOption("sort", 3)
+        TeleporterResetSort()
+
+        local OgrimmarSpell = TeleporterCreateSpell(Spell_TeleportOrgrimmar, "Orgrimmar")
+        local CampSpell = TeleporterCreateSpell(Spell_Camp, "Camp")
+        TeleporterMoveSpellAfter(CampSpell, OgrimmarSpell)        
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(TeleporterTest_GetButtonSettings()[1].spellId, Item_NightFaeHearthstone, "Item 1 sorted correctly")        
+        f:TestEquals(TeleporterTest_GetButtonSettings()[2].spellId, Spell_TeleportOrgrimmar, "Item 2 sorted correctly")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[3].spellId, Spell_Camp, "Item 3 sorted correctly")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[4].spellId, Item_WormholeGeneratorZandalar, "Item 4 sorted correctly")     
+    end,
 })
 
 -- No test for seasonOnly because it keeps changing. I'll add one if I find an API to query it
