@@ -8,6 +8,10 @@ local Item_NightFaeHearthstone = 180290
 local Item_NecrolordHearthstone = 182773
 local Item_VenthyrHearthstone = 183716
 local Item_KyrianHearthstone = 184353
+local Item_ShroudOfCooperation = 63353
+local Item_CloakOfCoordination = 65274
+
+local CloakDestination = "Orgrimmar"
 
 local function AddItemsOfEachType()
     WowMock:AddItem(Item_ScrollOfTownPortal, nil, "Scroll of Town Portal")
@@ -483,6 +487,55 @@ AddTests(
         f:TestEquals(TeleporterTest_GetButtonSettings()[2].spellId, Spell_TeleportOrgrimmar, "Item 2 sorted correctly")
         f:TestEquals(TeleporterTest_GetButtonSettings()[3].spellId, Spell_Camp, "Item 3 sorted correctly")
         f:TestEquals(TeleporterTest_GetButtonSettings()[4].spellId, Item_WormholeGeneratorZandalar, "Item 4 sorted correctly")     
+    end,
+    ["SingleItem_OverrideZone_IsInRightSection"] = function(f)
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)
+
+        local NewZoneName = "Home"
+
+        local spell = TeleporterCreateSpell(Spell_TeleportOrgrimmar, CloakDestination)
+
+        spell:OverrideZoneName(NewZoneName)
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(f:FindZoneLabels()[1]:GetText(), NewZoneName, "The zone name should have changed")
+    end,
+    ["SingleItem_OverrideZoneThenRevert_IsInRightSection"] = function(f)
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)
+
+        local NewZoneName = "Kyrian Home"
+
+        local spell = TeleporterCreateSpell(Spell_TeleportOrgrimmar, CloakDestination)
+                
+        spell:OverrideZoneName(NewZoneName)
+        spell:OverrideZoneName("")
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(f:FindZoneLabels()[1]:GetText(), CloakDestination, "The zone name should have reset")
+    end,
+    ["TwoItemsInSameZone_OverrideZoneOfOne_SplitIntoSeparateSections"] = function(f)
+        WowMock:AddItem(Item_ShroudOfCooperation)
+        WowMock:AddItem(Item_CloakOfCoordination)
+
+        local item = TeleporterCreateItem(Item_ShroudOfCooperation, CloakDestination)
+        item:OverrideZoneName("Home")
+
+        TeleporterOpenFrame()
+        f:TestEquals(#f:FindZoneLabels(), 2, "The buttons should be in separate zones")
+    end,
+    ["TwoItemsInSameZone_OverrideZoneOfOneThenSetDefault_AreInSingleSection"] = function(f)
+        WowMock:AddItem(Item_ShroudOfCooperation)
+        WowMock:AddItem(Item_CloakOfCoordination)
+
+        local item = TeleporterCreateItem(Item_NightFaeHearthstone, CloakDestination)
+        item:OverrideZoneName("Home")
+        item:OverrideZoneName("")
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(#f:FindZoneLabels(), 1, "The buttons should be in the same zone")
     end,
 })
 
