@@ -1,5 +1,5 @@
 local FullDungeonTeleportName = "Path of Heart's Bane"
-local ShortDungeonTeleportName = " Heart's Bane"    -- Bug! This shouldn't have the space.
+local ShortDungeonTeleportName = "Heart's Bane"
 local DungeonName = "Waycrest Manor"
 
 local Zone_AstralRecall = "1 Astral Recall"
@@ -23,7 +23,7 @@ local function AddItemsOfEachType()
 end
 
 AddTests(
-{ 
+{
     ["RandomHearthstoneEnabled_OpenFrame_OnlyOneHearthstoneShown"]  = function(f)
         TomeOfTele_Options["randomHearth"] = true
         WowMock:AddItem(Item_ScrollOfTownPortal)
@@ -59,8 +59,8 @@ AddTests(
             TeleporterOpenFrame()
             local spell2 = TeleporterTest_GetButtonSettings()[1].spellId
             alwaysSame = alwaysSame and spell1 == spell2
-        end        
-        
+        end
+
         f:TestEquals(alwaysSame, false, "The selected hearthstone should change")
     end,
     ["RandomHearthstoneEnabled_OpenFrame_AstralRecallShownSeparately"]  = function(f)
@@ -112,8 +112,8 @@ AddTests(
             WowMock:Tick(1)
             local spell2 = TeleporterTest_GetButtonSettings()[1].spellId
             succeeded = succeeded and spell1 == spell2
-        end        
-        
+        end
+
         f:TestEquals(succeeded, true, "The selected hearthstone should not change")
     end,
     ["RandomHearthstoneEnabled_OpenFrameWhileSomeSpellsUnloaded_SelectedItemDoesNotChange"]  = function(f)
@@ -137,14 +137,14 @@ AddTests(
             WowMock:Tick(1)
             local spell2 = TeleporterTest_GetButtonSettings()[1].spellId
             succeeded = succeeded and spell1 == spell2
-        end        
-        
+        end
+
         local startSpell = TeleporterTest_GetButtonSettings()[1].spellId
-        WowMock:SetItemLoaded(Item_TimewalkersHearthstone, true)        
+        WowMock:SetItemLoaded(Item_TimewalkersHearthstone, true)
         WowMock:Tick(1)
         local endSpell = TeleporterTest_GetButtonSettings()[1].spellId
 
-        succeeded = succeeded and startSpell == endSpell        
+        succeeded = succeeded and startSpell == endSpell
         f:TestEquals(succeeded, true, "The selected hearthstone should not change")
     end,
     ["HideItemsEnabled_OpenFrame_DoesNotShowItems"]  = function(f)
@@ -157,8 +157,8 @@ AddTests(
         f:TestEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_ScrollOfTownPortal), nil, "Consumable should not be visible")
         f:TestEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh), nil, "Item should not be visible")
         f:TestEquals(TeleporterTest_GetButtonSettingsFromItemId(Toy_TomeOfTownPortal), nil, "Toy should not be visible")
-        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_AstralRecall), nil, "Spell should be visible")        
-        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane), nil, "Dungeon spell should be visible")        
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_AstralRecall), nil, "Spell should be visible")
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane), nil, "Dungeon spell should be visible")
     end,
     ["HideConsumablesEnabled_OpenFrame_DoesNotShowConsumables"]  = function(f)
         TomeOfTele_Options["hideConsumable"] = true
@@ -170,8 +170,8 @@ AddTests(
         f:TestEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_ScrollOfTownPortal), nil, "Consumable should not be visible")
         f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh), nil, "Item should be visible")
         f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Toy_TomeOfTownPortal), nil, "Toy should be visible")
-        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_AstralRecall), nil, "Spell should be visible")        
-        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane), nil, "Dungeon spell should be visible")        
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_AstralRecall), nil, "Spell should be visible")
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane), nil, "Dungeon spell should be visible")
     end,
     ["HideSpellsEnabled_OpenFrame_DoesNotShowSpells"]  = function(f)
         TomeOfTele_Options["hideSpells"] = true
@@ -183,8 +183,8 @@ AddTests(
         f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_ScrollOfTownPortal), nil, "Consumable should be visible")
         f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh), nil, "Item should be visible")
         f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Toy_TomeOfTownPortal), nil, "Toy should be visible")
-        f:TestEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_AstralRecall), nil, "Spell should not be visible")        
-        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane), nil, "Dungeon spell should be visible")        
+        f:TestEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_AstralRecall), nil, "Spell should not be visible")
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane), nil, "Dungeon spell should be visible")
     end,
     ["HideChallengeEnabled_OpenFrame_DoesNotShowDungeonSpells"]  = function(f)
         TomeOfTele_Options["hideChallenge"] = true
@@ -196,21 +196,21 @@ AddTests(
         f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_ScrollOfTownPortal), nil, "Consumable should be visible")
         f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh), nil, "Item should be visible")
         f:TestNotEquals(TeleporterTest_GetButtonSettingsFromItemId(Toy_TomeOfTownPortal), nil, "Toy should be visible")
-        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_AstralRecall), nil, "Spell should be visible")        
-        f:TestEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane), nil, "Dungeon spell should not be visible")        
+        f:TestNotEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_AstralRecall), nil, "Spell should be visible")
+        f:TestEquals(TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane), nil, "Dungeon spell should not be visible")
     end,
     ["KnowDungeonSpell_OpenFrame_NameIsTruncated"] = function(f)
         WowMock:AddSpell(Spell_PathOfHeartsBane, FullDungeonTeleportName)
-        
+
         TeleporterOpenFrame()
 
         local button = TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane)
-        f:TestEquals(button.displaySpellName, ShortDungeonTeleportName, "Spell name should be truncated")
+        f:TestEquals("\"" .. button.displaySpellName .. "\"", "\"" .. ShortDungeonTeleportName .. "\"", "Spell name should be truncated")
     end,
     ["ShowDungeonNamesEnabled_OpenFrame_NameIsTruncated"] = function(f)
         TomeOfTele_Options["showDungeonNames"] = true
         WowMock:AddSpell(Spell_PathOfHeartsBane, FullDungeonTeleportName)
-        
+
         TeleporterOpenFrame()
 
         local button = TeleporterTest_GetButtonSettingsFromSpellId(Spell_PathOfHeartsBane)
@@ -250,7 +250,7 @@ AddTests(
         TeleporterOpenFrame()
 
         f:TestEquals(#f:FindZoneLabels(), 2, "Only dungeon spells should be grouped")
-    end, 
+    end,
     ["SpellHasZoneRestrictionAndPlayerInWrongZone_OpenFrame_SpellIsNotVisible"] = function(f)
         WowMock:AddItem(Item_KirinTorBeacon)
         WowMock:SetMap(100)
@@ -279,7 +279,7 @@ AddTests(
     ["CloseAfterCastEnabled_ClickSpellButtonAndTimePasses_FrameStaysOpenUntilEnd"] = function(f)
         TomeOfTele_Options["closeAfterCast"] = true
         WowMock:AddSpell(Spell_AstralRecall)
-        
+
         TeleporterOpenFrame()
 
         WowMock:ClickFrame(f:FindButtons()[1])
@@ -291,7 +291,7 @@ AddTests(
     ["CloseAfterCastEnabled_ClickToyButtonAndTimePasses_FrameStaysOpenUntilEnd"] = function(f)
         TomeOfTele_Options["closeAfterCast"] = true
         WowMock:AddToy(Toy_TomeOfTownPortal)
-        
+
         TeleporterOpenFrame()
 
         WowMock:ClickFrame(f:FindButtons()[1])
@@ -303,14 +303,14 @@ AddTests(
     ["CloseAfterCastEnabled_ClickItemButtonAndTimePasses_FrameIsClosed"] = function(f)
         TomeOfTele_Options["closeAfterCast"] = true
         WowMock:AddItem(Item_Hearthstone)
-        
+
         TeleporterOpenFrame()
 
         WowMock:ClickFrame(f:FindButtons()[1])
 
         f:TestEquals(TeleporterFrame:IsVisible(), true, "Frame should be open")
         WowMock:Tick(1)
-        f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")  
+        f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")
     end,
     ["AllCovenantsNotEnabledAndRandomHearthEnabled_OpenFrameMultipleTimes_AlwaysSelectOwnCovenant"]  = function(f)
         TomeOfTele_Options["randomHearth"] = true
@@ -330,8 +330,8 @@ AddTests(
             TeleporterOpenFrame()
             alwaysCovenant = alwaysCovenant and TeleporterTest_GetButtonSettings()[1].spellId == Item_KyrianHearthstone
             TeleporterClose()
-        end        
-        
+        end
+
         f:TestEquals(alwaysCovenant, true, "The selected hearthstone should always be from the current covenant")
     end,
     ["AllCovenantsEnabledAndRandomHearthEnabled_OpenFrameMultipleTimes_DontAlwaysSelectOwnCovenant"]  = function(f)
@@ -353,8 +353,8 @@ AddTests(
             TeleporterOpenFrame()
             alwaysCovenant = alwaysCovenant and TeleporterTest_GetButtonSettings()[1].spellId == Item_KyrianHearthstone
             TeleporterClose()
-        end        
-        
+        end
+
         f:TestEquals(alwaysCovenant, false, "The selected hearthstone should not always be from the current covenant")
     end,
     ["AllCovenantsNotEnabledAndRandomHearthNotEnabled_OpenFrame_AllCovenantsVisible"]  = function(f)
@@ -364,13 +364,13 @@ AddTests(
         WowMock:AddToy(Item_KyrianHearthstone)
 
         TeleporterOpenFrame()
-        
+
         f:TestEquals(#TeleporterTest_GetButtonSettings(), 4, "There should be a button for each covenant")
     end,
     ["SpellIsHidden_OpenFrame_HasNoButtonForSpell"] = function(f)
         WowMock:AddSpell(Spell_AstralRecall, "Astral Recall")
         local spell = TeleporterCreateItem(Spell_AstralRecall, Zone_AstralRecall)
-        
+
         spell:SetHidden()
         TeleporterOpenFrame()
 
@@ -379,7 +379,7 @@ AddTests(
     ["SpellIsHiddenThenVisible_OpenFrame_HasButtonForSpell"] = function(f)
         WowMock:AddSpell(Spell_AstralRecall, "Astral Recall")
         local spell = TeleporterCreateItem(Spell_AstralRecall, Zone_AstralRecall)
-        
+
         spell:SetHidden()
         spell:SetVisible()
         TeleporterOpenFrame()
@@ -388,7 +388,7 @@ AddTests(
     end,
     ["SpellIsNotKnownAndAlwaysVisible_OpenFrame_HasButtonForSpell"] = function(f)
         local spell = TeleporterCreateItem(Spell_AstralRecall, Zone_AstralRecall)
-        
+
         spell:SetAlwaysVisible()
         TeleporterOpenFrame()
 
@@ -396,7 +396,7 @@ AddTests(
     end,
     ["SpellIsNotKnownAndAlwaysVisibleThenJustVisible_OpenFrame_HasNoButtonForSpell"] = function(f)
         local spell = TeleporterCreateItem(Spell_AstralRecall, Zone_AstralRecall)
-        
+
         spell:SetAlwaysVisible()
         spell:SetVisible()
         TeleporterOpenFrame()
@@ -404,10 +404,10 @@ AddTests(
         f:TestEquals(#TeleporterTest_GetButtonSettings(), 0, "There should not be a button")
     end,
     ["SortByDestination_OpenFrame_SortedCorrectly"] = function(f)
-        WowMock:AddToy(Item_NightFaeHearthstone)         
-        WowMock:AddSpell(Spell_Camp)                  
-        WowMock:AddSpell(Spell_TeleportOrgrimmar)  
-        WowMock:AddItem(Item_WormholeGeneratorZandalar) 
+        WowMock:AddToy(Item_NightFaeHearthstone)
+        WowMock:AddSpell(Spell_Camp)
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)
+        WowMock:AddItem(Item_WormholeGeneratorZandalar)
 
         TeleporterSetOption("sort", 1)
 
@@ -415,13 +415,13 @@ AddTests(
 
         f:TestEquals(TeleporterTest_GetButtonSettings()[1].spellId, Item_NightFaeHearthstone, "Item 1 sorted correctly")
         f:TestEquals(TeleporterTest_GetButtonSettings()[2].spellId, Spell_Camp, "Item 2 sorted correctly")
-        f:TestEquals(TeleporterTest_GetButtonSettings()[3].spellId, Spell_TeleportOrgrimmar, "Item 3 sorted correctly")        
+        f:TestEquals(TeleporterTest_GetButtonSettings()[3].spellId, Spell_TeleportOrgrimmar, "Item 3 sorted correctly")
         f:TestEquals(TeleporterTest_GetButtonSettings()[4].spellId, Item_WormholeGeneratorZandalar, "Item 4 sorted correctly")
     end,
     ["SortByType_OpenFrame_SortedCorrectly"] = function(f)
-        WowMock:AddToy(Item_NightFaeHearthstone)         
-        WowMock:AddSpell(Spell_Camp)                
-        WowMock:AddSpell(Spell_TeleportOrgrimmar)       
+        WowMock:AddToy(Item_NightFaeHearthstone)
+        WowMock:AddSpell(Spell_Camp)
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)
         WowMock:AddItem(Item_WormholeGeneratorZandalar)
 
         TeleporterSetOption("sort", 2)
@@ -430,14 +430,14 @@ AddTests(
 
         f:TestEquals(TeleporterTest_GetButtonSettings()[1].spellId, Item_NightFaeHearthstone, "Item 1 sorted correctly")
         f:TestEquals(TeleporterTest_GetButtonSettings()[2].spellId, Item_WormholeGeneratorZandalar, "Item 2 sorted correctly")
-        f:TestEquals(TeleporterTest_GetButtonSettings()[3].spellId, Spell_Camp, "Item 3 sorted correctly")        
+        f:TestEquals(TeleporterTest_GetButtonSettings()[3].spellId, Spell_Camp, "Item 3 sorted correctly")
         f:TestEquals(TeleporterTest_GetButtonSettings()[4].spellId, Spell_TeleportOrgrimmar, "Item 4 sorted correctly")
     end,
     ["SortCustom_NoCustomisations_SortedCorrectly"] = function(f)
-        WowMock:AddToy(Item_NightFaeHearthstone)         
-        WowMock:AddSpell(Spell_Camp)                  
-        WowMock:AddSpell(Spell_TeleportOrgrimmar)  
-        WowMock:AddItem(Item_WormholeGeneratorZandalar) 
+        WowMock:AddToy(Item_NightFaeHearthstone)
+        WowMock:AddSpell(Spell_Camp)
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)
+        WowMock:AddItem(Item_WormholeGeneratorZandalar)
 
         TeleporterSetOption("sort", 3)
 
@@ -445,48 +445,48 @@ AddTests(
 
         f:TestEquals(TeleporterTest_GetButtonSettings()[1].spellId, Item_NightFaeHearthstone, "Item 1 sorted correctly")
         f:TestEquals(TeleporterTest_GetButtonSettings()[2].spellId, Spell_Camp, "Item 2 sorted correctly")
-        f:TestEquals(TeleporterTest_GetButtonSettings()[3].spellId, Spell_TeleportOrgrimmar, "Item 3 sorted correctly")        
+        f:TestEquals(TeleporterTest_GetButtonSettings()[3].spellId, Spell_TeleportOrgrimmar, "Item 3 sorted correctly")
         f:TestEquals(TeleporterTest_GetButtonSettings()[4].spellId, Item_WormholeGeneratorZandalar, "Item 4 sorted correctly")
     end,
     ["SortCustom_MoveSpellBefore_SortedCorrectly"] = function(f)
-        WowMock:AddToy(Item_NightFaeHearthstone)         
-        WowMock:AddSpell(Spell_Camp)                  
-        WowMock:AddSpell(Spell_TeleportOrgrimmar)  
-        WowMock:AddItem(Item_WormholeGeneratorZandalar) 
+        WowMock:AddToy(Item_NightFaeHearthstone)
+        WowMock:AddSpell(Spell_Camp)
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)
+        WowMock:AddItem(Item_WormholeGeneratorZandalar)
 
         TeleporterSetOption("sort", 3)
         TeleporterResetSort()
 
         local WormholeSpell = TeleporterCreateItem(Item_WormholeGeneratorZandalar, "Zandalar")
         local CampSpell = TeleporterCreateSpell(Spell_Camp, "Camp")
-        TeleporterMoveSpellBefore(WormholeSpell, CampSpell)        
+        TeleporterMoveSpellBefore(WormholeSpell, CampSpell)
 
         TeleporterOpenFrame()
 
         f:TestEquals(TeleporterTest_GetButtonSettings()[1].spellId, Item_NightFaeHearthstone, "Item 1 sorted correctly")
         f:TestEquals(TeleporterTest_GetButtonSettings()[2].spellId, Item_WormholeGeneratorZandalar, "Item 2 sorted correctly")
         f:TestEquals(TeleporterTest_GetButtonSettings()[3].spellId, Spell_Camp, "Item 3 sorted correctly")
-        f:TestEquals(TeleporterTest_GetButtonSettings()[4].spellId, Spell_TeleportOrgrimmar, "Item 4 sorted correctly")        
+        f:TestEquals(TeleporterTest_GetButtonSettings()[4].spellId, Spell_TeleportOrgrimmar, "Item 4 sorted correctly")
     end,
     ["SortCustom_MoveSpellBelow_SortedCorrectly"] = function(f)
-        WowMock:AddToy(Item_NightFaeHearthstone)         
-        WowMock:AddSpell(Spell_Camp)                  
-        WowMock:AddSpell(Spell_TeleportOrgrimmar)  
-        WowMock:AddItem(Item_WormholeGeneratorZandalar) 
+        WowMock:AddToy(Item_NightFaeHearthstone)
+        WowMock:AddSpell(Spell_Camp)
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)
+        WowMock:AddItem(Item_WormholeGeneratorZandalar)
 
         TeleporterSetOption("sort", 3)
         TeleporterResetSort()
 
         local OgrimmarSpell = TeleporterCreateSpell(Spell_TeleportOrgrimmar, "Orgrimmar")
         local CampSpell = TeleporterCreateSpell(Spell_Camp, "Camp")
-        TeleporterMoveSpellAfter(CampSpell, OgrimmarSpell)        
+        TeleporterMoveSpellAfter(CampSpell, OgrimmarSpell)
 
         TeleporterOpenFrame()
 
-        f:TestEquals(TeleporterTest_GetButtonSettings()[1].spellId, Item_NightFaeHearthstone, "Item 1 sorted correctly")        
+        f:TestEquals(TeleporterTest_GetButtonSettings()[1].spellId, Item_NightFaeHearthstone, "Item 1 sorted correctly")
         f:TestEquals(TeleporterTest_GetButtonSettings()[2].spellId, Spell_TeleportOrgrimmar, "Item 2 sorted correctly")
         f:TestEquals(TeleporterTest_GetButtonSettings()[3].spellId, Spell_Camp, "Item 3 sorted correctly")
-        f:TestEquals(TeleporterTest_GetButtonSettings()[4].spellId, Item_WormholeGeneratorZandalar, "Item 4 sorted correctly")     
+        f:TestEquals(TeleporterTest_GetButtonSettings()[4].spellId, Item_WormholeGeneratorZandalar, "Item 4 sorted correctly")
     end,
     ["SingleItem_OverrideZone_IsInRightSection"] = function(f)
         WowMock:AddSpell(Spell_TeleportOrgrimmar)
@@ -507,7 +507,7 @@ AddTests(
         local NewZoneName = "Kyrian Home"
 
         local spell = TeleporterCreateSpell(Spell_TeleportOrgrimmar, CloakDestination)
-                
+
         spell:OverrideZoneName(NewZoneName)
         spell:OverrideZoneName("")
 

@@ -406,6 +406,14 @@ function C_Map.GetBestMapForUnit()
     return WowMock.currentMap
 end
 
+function GetLFGDungeonInfo(dungeon)
+    if dungeon == 1705 or dungeon == 1706 then 
+        return "Waycrest Manor"
+    else
+        return "Unknown dungeon"
+    end
+end
+
 -- Unit
 function UnitAffectingCombat()
     return WowMock.inCombat
