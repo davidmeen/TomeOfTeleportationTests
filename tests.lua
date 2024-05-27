@@ -30,7 +30,7 @@ Fixture = {}
 
 function Fixture:BeforeTest()
     TeleporterTest_Reset()
-    CreateFrame("Frame", "TeleporterFrame")    
+    CreateFrame("Frame", "TeleporterFrame")
     Teleporter_OnAddonLoaded()
     Teleporter_OnLoad()
     WowMock:SetOnUpdate(Teleporter_OnUpdate)
@@ -97,7 +97,7 @@ function Fixture:TestButtonColour(button, colourSetting, message)
     self:TestEquals(settingB, buttonB, message .. " (B)")
 end
 
-function Fixture:FindButtons()    
+function Fixture:FindButtons()
     return WowMock:FindFramesWithTemplate("InsecureActionButtonTemplate")
 end
 
@@ -134,8 +134,8 @@ local numFailed = 0
 
 for name, testFunction in pairs(Tests) do
     -- TODO: On a switch
-    --local runOnly1 = "RandomHearthstoneEnabled_OpenFrameMultipleTimes_SelectedItemIsNotAlwaysTheSame"
-    --local runOnly2 = "HaveEquipableItemUnequiped_ClickButtonTwice_ItemIsUsedAndClosesFrameAndUnequips"    
+    --local runOnly1 = "DuplicateItemInSettings_OpenFrame_OnlyShownOnce"
+    --local runOnly2 = "HaveEquipableItemUnequiped_ClickButtonTwice_ItemIsUsedAndClosesFrameAndUnequips"
     if not runOnly1 or name == runOnly1 or name == runOnly2 then
         --print(name)
 

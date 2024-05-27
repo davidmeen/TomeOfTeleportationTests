@@ -42,8 +42,8 @@ end
 
 SlashCmdList = {}
 
-local InvTypeToSlot = 
-{	
+local InvTypeToSlot =
+{
 	["INVTYPE_HEAD"] = 1,
 	["INVTYPE_NECK"] = 2,
 	["INVTYPE_SHOULDER"] = 3,
@@ -130,7 +130,7 @@ end
 
 function WowMock:AddItem(itemId, slot, name)
     self.knownItems[itemId] = true
-    if self.itemCounts[itemId] then 
+    if self.itemCounts[itemId] then
         self.itemCounts[itemId] = self.itemCounts[itemId] + 1
     else
         self.itemCounts[itemId] = 1
@@ -316,7 +316,7 @@ function WowMock:RemoveFromInventory(item)
         for slot, slotItem in ipairs(bag) do
             if slotItem == item then
                 bag[slot] = nil
-            end 
+            end
         end
     end
 end
@@ -407,7 +407,7 @@ function C_Map.GetBestMapForUnit()
 end
 
 function GetLFGDungeonInfo(dungeon)
-    if dungeon == 1705 or dungeon == 1706 then 
+    if dungeon == 1705 or dungeon == 1706 then
         return "Waycrest Manor"
     else
         return "Unknown dungeon"
@@ -443,9 +443,9 @@ function IsEquippableItem(itemId)
     end
 end
 
-function IsEquippedItem(item)    
+function IsEquippedItem(item)
     local itemId = WowMock:GetItemIdFromName(item)
-    
+
     local invType = WowMock.itemEquipLoc[itemId]
     if not invType then
         return false
@@ -516,7 +516,7 @@ function Frame:SetFont(font)
     self.font = font;
 end
 
-function Frame:SetText(text)    
+function Frame:SetText(text)
     self.text = text;
 end
 
@@ -527,7 +527,7 @@ end
 function Frame:CreateFontString(name, drawLayer, templateName)
     local template
     local f = CreateFrame("FontString", name, self, templateName)
-    f.drawLayer = drawLayer    
+    f.drawLayer = drawLayer
     return f
 end
 
@@ -648,7 +648,7 @@ end
 function GameFontNormalSmall:GetStringWidth()
     if self.text then
         return string.len(self.text) * 8
-    else   
+    else
         return 0
     end
 end
@@ -679,11 +679,11 @@ function GetInventoryItemID(unit, slot)
 end
 
 function EquipItemByName(item, slot)
-    if not slot then 
+    if not slot then
         print("Unsupported: Unknown slot")
     end
     local itemId = WowMock:GetItemIdFromName(item)
-    
+
     -- Doesn't handle multiple slots with same item type!
     WowMock:EquipItem(itemId)
 end
@@ -693,7 +693,7 @@ function GetSpellInfo(spell)
     local spellId = WowMock:GetSpellIdFromName(spell)
     if WowMock.loaded then
         return WowMock.spellIdToName[spellId] or "FAKESPELL", nil, "icon"..spellId, 1.5, 0, 0, spellId, "icon"..spellId
-    else        
+    else
         return nil
     end
 end
@@ -777,7 +777,13 @@ function C_ToyBox.IsToyUsable(itemId)
 end
 
 function PlayerHasToy(itemId)
-    return WowMock.knownToys[itemId]
+    if WowMock.knownToys[itemId] then
+        return true
+    elseif type(itemId) == "string" then
+        return WowMock.knownToys[tonumber(itemId)]
+    else
+        return false
+    end
 end
 
 -- Covenants

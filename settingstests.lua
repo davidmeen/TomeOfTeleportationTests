@@ -537,6 +537,53 @@ AddTests(
 
         f:TestEquals(#f:FindZoneLabels(), 1, "The buttons should be in the same zone")
     end,
+    ["CustomItemInSettings_ResetGame_NoErrors"] = function(f)
+        local Item_CritterHandCannon = 131933
+        WowMock:AddToy(Item_CritterHandCannon)
+
+       local extraSpellsAndItems = {
+            {
+            ["isItem"] = true,
+            ["spellId"] = ""..Item_CritterHandCannon,
+            ["zone"] = "Black Temple",
+            ["toySpell"] = "Critter Shot",
+            ["isCustom"] = true,
+            ["spellType"] = 1,
+            ["itemTexture"] = 331784,
+            ["displayDestination"] = "Black Temple",
+            ["spellName"] = "Critter Hand Cannon",
+            }
+        }
+        TeleporterSetOption("extraSpellsAndItems", extraSpellsAndItems)
+
+        TeleporterRebuildSpellList()
+        TeleporterOpenFrame()
+
+        f:TestEquals(#f:FindButtons(), 1, "There should be 1 button")
+    end,
+    ["DuplicateItemInSettings_OpenFrame_OnlyShownOnce"] = function(f)
+        WowMock:AddToy(Item_NightFaeHearthstone)
+
+        local extraSpellsAndItems = {
+             {
+             ["isItem"] = true,
+             ["spellId"] = ""..Item_NightFaeHearthstone,
+             ["zone"] = "0 Hearth",
+             ["toySpell"] = "Hearthstone",
+             ["isCustom"] = true,
+             ["spellType"] = 1,
+             ["itemTexture"] = 0,
+             ["displayDestination"] = "0 Hearth",
+             ["spellName"] = "Night Fae Hearthstone",
+             }
+         }
+         TeleporterSetOption("extraSpellsAndItems", extraSpellsAndItems)
+
+         TeleporterRebuildSpellList()
+         TeleporterOpenFrame()
+
+         f:TestEquals(#f:FindButtons(), 1, "There should be 1 button")
+     end,
 })
 
 -- No test for seasonOnly because it keeps changing. I'll add one if I find an API to query it
