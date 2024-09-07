@@ -640,6 +640,7 @@ CreateFrame("Frame", "UIPanelScrollFrameTemplate")
 CreateFrame("Frame", "UIDropDownMenuTemplate")
 CreateFrame("Frame", "UICheckButtonTemplate")
 CreateFrame("Frame", "OptionsSliderTemplate")
+CreateFrame("Frame", "InputBoxTemplate")
 
 function UIPanelButtonTemplate:Construct()
     self:CreateFontString(self.name.."Text", nil, "GameFontNormalSmall")
@@ -817,3 +818,12 @@ end
 
 function OptionsSliderTemplate:SetOrientation()
 end
+
+-- Input box
+function InputBoxTemplate:SetAutoFocus()
+end
+
+function InputBoxTemplate:SetMultiLine()
+end
+
+GARRISON_LOCATION_TOOLTIP = "Garrison"
