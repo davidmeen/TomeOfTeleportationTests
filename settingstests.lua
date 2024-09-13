@@ -116,6 +116,65 @@ AddTests(
 
         f:TestEquals(succeeded, true, "The selected hearthstone should not change")
     end,
+    ["RandomHearthstoneEnabled_SomeOnCooldown_ShowHearthstoneNotOnCooldown"]  = function(f)
+        TomeOfTele_Options["randomHearth"] = true
+        WowMock:AddItem(Item_ScrollOfTownPortal)
+        WowMock:AddToy(Toy_TomeOfTownPortal)
+        WowMock:AddToy(Item_DarkPortal)
+        WowMock:AddToy(Item_FireEatersHearthstone)
+        WowMock:AddToy(Item_EternalTravelersHearthstone)
+        WowMock:AddToy(Item_TimewalkersHearthstone)
+
+        WowMock:SetItemCooldown(Item_ScrollOfTownPortal, GetTime() - 15 * 60 * 60, 30 * 60 * 60)
+        WowMock:SetItemCooldown(Item_DarkPortal, GetTime() - 15 * 60 * 60, 30 * 60 * 60)
+        WowMock:SetItemCooldown(Item_FireEatersHearthstone, GetTime() - 15 * 60 * 60, 30 * 60 * 60)
+
+        WowMock:Tick(1)
+
+        TeleporterOpenFrame()
+
+        local alwaysSame = true
+
+        WowMock:Tick(1)
+
+        for i = 1, 10, 1 do
+            f:TestEquals(TeleporterTest_GetButtonSettings()[1].cooldownString:GetText(), "", "The Hearthstone button should display the correct cooldown")
+            TeleporterClose()
+            WowMock:Tick(1)
+            TeleporterOpenFrame()
+        end
+    end,
+    ["RandomHearthstoneEnabled_AllOnCooldown_ShowHearthstoneWithShortestCooldown"]  = function(f)
+        TomeOfTele_Options["randomHearth"] = true
+        WowMock:AddItem(Item_ScrollOfTownPortal)
+        WowMock:AddToy(Toy_TomeOfTownPortal)
+        WowMock:AddToy(Item_DarkPortal)
+        WowMock:AddToy(Item_FireEatersHearthstone)
+        WowMock:AddToy(Item_EternalTravelersHearthstone)
+        WowMock:AddToy(Item_TimewalkersHearthstone)
+
+        WowMock:SetItemCooldown(Item_ScrollOfTownPortal, GetTime() - 10 * 60 * 60, 30 * 60 * 60)
+        WowMock:SetItemCooldown(Toy_TomeOfTownPortal, GetTime() - 15 * 60 * 60, 30 * 60 * 60)
+        WowMock:SetItemCooldown(Item_DarkPortal, GetTime() - 10 * 60 * 60, 30 * 60 * 60)
+        WowMock:SetItemCooldown(Item_FireEatersHearthstone, GetTime() - 15 * 60 * 60, 30 * 60 * 60)
+        WowMock:SetItemCooldown(Item_EternalTravelersHearthstone, GetTime() - 10 * 60 * 60, 30 * 60 * 60)
+        WowMock:SetItemCooldown(Item_TimewalkersHearthstone, GetTime() - 15 * 60 * 60, 30 * 60 * 60)
+
+        WowMock:Tick(1)
+
+        TeleporterOpenFrame()
+
+        local alwaysSame = true
+
+        WowMock:Tick(1)
+
+        for i = 1, 10, 1 do
+            f:TestEquals(TeleporterTest_GetButtonSettings()[1].cooldownString:GetText(), "15h", "The Hearthstone button should display the correct cooldown")
+            TeleporterClose()
+            WowMock:Tick(1)
+            TeleporterOpenFrame()
+        end
+    end,
     ["RandomHearthstoneEnabled_OpenFrameWhileSomeSpellsUnloaded_SelectedItemDoesNotChange"]  = function(f)
         TomeOfTele_Options["randomHearth"] = true
         WowMock:AddItem(Item_ScrollOfTownPortal)
