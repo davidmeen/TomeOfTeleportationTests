@@ -827,3 +827,7 @@ function InputBoxTemplate:SetMultiLine()
 end
 
 GARRISON_LOCATION_TOOLTIP = "Garrison"
+
+function GetLocale()
+    return "enUS"
+end
