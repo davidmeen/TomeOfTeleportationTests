@@ -294,13 +294,13 @@ function WowMock:Tick(dt)
 
     -- Assume all spells complete in a single tick
     if self.usingItem then
-        local spellName = GetSpellInfo(GetItemSpell(self.usingItem))
-        WowMock:OnEvent("UNIT_SPELLCAST_SUCCEEDED", "player", "{...}", spellName)
+        local spellId = C_Spell.GetSpellInfo(GetItemSpell(self.usingItem)).spellID
+        WowMock:OnEvent("UNIT_SPELLCAST_SUCCEEDED", "player", "{...}", spellId)
         self.usingItem = nil
     end
     if self.usingSpell then
-        local spellName = GetSpellInfo(self.usingSpell)
-        WowMock:OnEvent("UNIT_SPELLCAST_SUCCEEDED", "player", "{...}", spellName)
+        local spellId = C_Spell.GetSpellInfo(self.usingSpell).spellID
+        WowMock:OnEvent("UNIT_SPELLCAST_SUCCEEDED", "player", "{...}", spellId)
         self.usingSpell = nil
     end
 end
@@ -697,6 +697,20 @@ function GetSpellInfo(spell)
     else
         return nil
     end
+end
+
+C_Spell = {}
+function C_Spell.GetSpellInfo(spell)
+    local spellId = WowMock:GetSpellIdFromName(spell)
+    local r  = {}
+    r.castTime = 1.5
+    r.name = WowMock.spellIdToName[spellId] or "FAKESPELL"
+    r.minRange = 0
+    r.originalIconID = "icon"..spellId
+    r.iconID = "icon"..spellId
+    r.maxRange = 0
+    r.spellID = spellId
+    return r
 end
 
 function IsSpellKnown(spellId)
