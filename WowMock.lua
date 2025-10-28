@@ -409,6 +409,18 @@ end
 function GetLFGDungeonInfo(dungeon)
     if dungeon == 1705 or dungeon == 1706 then
         return "Waycrest Manor"
+    elseif dungeon == 1975 then
+        return "Auchindoun"
+    elseif dungeon == 2335 then
+        return "The Azure Vault"
+    elseif dungeon == 471 then
+        return "Gate of the Setting Sun"
+    elseif dungeon == 2405 then
+        return "Aberrus"
+    elseif dungeon == 2779 then
+        return "Liberation of Undermine"
+    elseif dungeon == 2805 then
+        return "Manaforge Omega"
     else
         return "Unknown dungeon"
     end

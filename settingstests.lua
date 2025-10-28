@@ -13,6 +13,10 @@ local Item_CloakOfCoordination = 65274
 
 local CloakDestination = "Orgrimmar"
 
+local Spell_Aberrus = 432257
+local Spell_Manaforge = 1239155
+local Spell_Undermine = 1226482
+
 local function AddItemsOfEachType()
     WowMock:AddItem(Item_ScrollOfTownPortal, nil, "Scroll of Town Portal")
     WowMock:AddItem(Item_ScrollOfTownPortal, nil, "Scroll of Town Portal")
@@ -310,6 +314,70 @@ AddTests(
 
         f:TestEquals(#f:FindZoneLabels(), 2, "Only dungeon spells should be grouped")
     end,
+    ["ShowDungeonNamesAndGroupDungeonsEnabled_OpenFrame_NamesAreSorted"] = function(f)
+        TomeOfTele_Options["showDungeonNames"] = true
+        TomeOfTele_Options["groupDungeons"] = true
+
+        WowMock:AddSpell(Spell_PathOfHeartsBane, "Path of Hearts Bane")
+        WowMock:AddSpell(Spell_PathOfTheVigilant, "Path of the Vigilant")
+        WowMock:AddSpell(Spell_PathOfArcaneSecrets, "Path of Arcane Secrets")
+        WowMock:AddSpell(Spell_PathOfTheSettingSun, "Path of the Setting Sun")
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(TeleporterTest_GetButtonSettings()[1].displaySpellName, "Auchindoun", "Spells should be sorted")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[2].displaySpellName, "Gate of the Setting Sun", "Spells should be sorted")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[3].displaySpellName, "The Azure Vault", "Spells should be sorted")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[4].displaySpellName, "Waycrest Manor", "Spells should be sorted")
+    end,
+
+    ["GroupRaidsDisabled_OpenFrame_EachRaidIsInItsOwnSection"] = function(f)
+        WowMock:AddSpell(Spell_Aberrus)
+        WowMock:AddSpell(Spell_Manaforge)
+        WowMock:AddSpell(Spell_Undermine)
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(#f:FindZoneLabels(), 3, "Each spell should have its own section")
+    end,
+    ["GroupRaidsEnabled_OpenFrame_EachRaidIsInItsOwnSection"] = function(f)
+        TomeOfTele_Options["groupRaids"] = true
+
+        WowMock:AddSpell(Spell_Aberrus)
+        WowMock:AddSpell(Spell_Manaforge)
+        WowMock:AddSpell(Spell_Undermine)
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(#f:FindZoneLabels(), 1, "Spells should be grouped")
+    end,
+    ["GroupRaidsEnabledWithNonRaidSpells_OpenFrame_OnlyRaidSpellsAreGrouped"] = function(f)
+        TomeOfTele_Options["groupRaids"] = true
+
+        WowMock:AddSpell(Spell_Aberrus)
+        WowMock:AddSpell(Spell_Manaforge)
+        WowMock:AddSpell(Spell_Undermine)
+        WowMock:AddSpell(Spell_TeleportOrgrimmar)
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(#f:FindZoneLabels(), 2, "Only raid spells should be grouped")
+    end,
+    ["ShowDungeonNamesAndGroupRaidsEnabled_OpenFrame_NamesAreSorted"] = function(f)
+        TomeOfTele_Options["showDungeonNames"] = true
+        TomeOfTele_Options["groupRaids"] = true
+
+        WowMock:AddSpell(Spell_Aberrus)
+        WowMock:AddSpell(Spell_Manaforge)
+        WowMock:AddSpell(Spell_Undermine)
+
+        TeleporterOpenFrame()
+
+        f:TestEquals(TeleporterTest_GetButtonSettings()[1].displaySpellName, "Aberrus", "Spells should be sorted")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[2].displaySpellName, "Liberation of Undermine", "Spells should be sorted")
+        f:TestEquals(TeleporterTest_GetButtonSettings()[3].displaySpellName, "Manaforge Omega", "Spells should be sorted")
+    end,
+
     ["SpellHasZoneRestrictionAndPlayerInWrongZone_OpenFrame_SpellIsNotVisible"] = function(f)
         WowMock:AddItem(Item_KirinTorBeacon)
         WowMock:SetMap(100)
