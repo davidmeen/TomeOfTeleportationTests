@@ -48,6 +48,7 @@ function Fixture:BeforeTest()
     TeleporterFrame:RegisterEvent("ZONE_CHANGED");
     TeleporterFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA");
     TeleporterFrame:RegisterEvent("ZONE_CHANGED_INDOORS");
+    TeleporterFrame:RegisterEvent("PLAYER_HOUSE_LIST_UPDATED");
     TeleporterFrame.OnEvent = Teleporter_OnEvent
 
     TeleporterClose()
@@ -128,6 +129,7 @@ end
 dofile("layouttests.lua")
 dofile("interactiontests.lua")
 dofile("settingstests.lua")
+dofile("housetests.lua")
 
 local numSucceeded = 0
 local numFailed = 0

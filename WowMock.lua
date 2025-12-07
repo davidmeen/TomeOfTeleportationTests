@@ -106,6 +106,9 @@ function WowMock:Init()
     self.spellIdToName = {}
     self.spellNameToId = {}
     self.itemIdToSpellId = {}
+
+    self.houses = {}
+    self.gettingHouses = false
 end
 
 function WowMock:SetInCombat(b)
@@ -302,6 +305,10 @@ function WowMock:Tick(dt)
         local spellId = C_Spell.GetSpellInfo(self.usingSpell).spellID
         WowMock:OnEvent("UNIT_SPELLCAST_SUCCEEDED", "player", "{...}", spellId)
         self.usingSpell = nil
+    end
+    if self.gettingHouses then
+        WowMock:OnEvent("PLAYER_HOUSE_LIST_UPDATED", self.houses or {})
+        self.gettingHouses = false
     end
 end
 
@@ -850,6 +857,26 @@ function InputBoxTemplate:SetAutoFocus()
 end
 
 function InputBoxTemplate:SetMultiLine()
+end
+
+-- Houses
+C_Housing = {}
+
+function WowMock:SetHouses(HouseList)
+    self.houses = HouseList
+end
+
+function C_Housing.GetPlayerOwnedHouses()
+    WowMock.gettingHouses = true
+end
+
+function C_Housing.GetUIMapIDForNeighborhood(neighborhoodGUID)
+    for i, house in ipairs(WowMock.houses) do
+        if house.neighborhoodGUID == neighborhoodGUID then
+            return house.mapID
+        end
+    end
+    return nil
 end
 
 GARRISON_LOCATION_TOOLTIP = "Garrison"
