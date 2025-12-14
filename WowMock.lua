@@ -397,11 +397,22 @@ function C_Map.GetMapInfo(mapID)
     local r = {}
     r.parentMapID = 0
     local mapNames = {
+        [41] = "Dalaran",   -- Classic?
         [85] = "Orgrimmar",
+        [103] = "The Exodar",
+        [118] = "Icecrown",
+        [113] = "Northrend",
+        [125] = "Dalaran",  -- Wrath
+        [627] = "Dalaran",  -- Legion
         [875] = "Zandalar",
-        [424167] = "Waycrest Manor"
+        [6930] = "Karabor",
+        [424167] = "Waycrest Manor",
     }
     r.name = mapNames[mapID] or "Zone" .. mapID
+
+    if mapID == 125 or mapID == 118 then
+        r.parentMapID = 113
+    end
     return r
 end
 
@@ -880,6 +891,20 @@ function C_Housing.GetUIMapIDForNeighborhood(neighborhoodGUID)
 end
 
 GARRISON_LOCATION_TOOLTIP = "Garrison"
+
+EXPANSION_NAME0 = "Classic"
+EXPANSION_NAME1 = "The Burning Crusade"
+EXPANSION_NAME2 = "Wrath of the Lich King"
+EXPANSION_NAME3 = "Cataclysm"
+EXPANSION_NAME4 = "Mists of Pandaria"
+EXPANSION_NAME5 = "Warlords  Draenor"
+EXPANSION_NAME6 = "Legion"
+EXPANSION_NAME7 = "Battle for Azeroth"
+EXPANSION_NAME8 = "Shadowlands"
+EXPANSION_NAME9 = "Dragonflight"
+EXPANSION_NAME10 = "The War Within"
+EXPANSION_NAME11 = "Midnight"
+EXPANSION_NAME12 = "The Last Titan"
 
 function GetLocale()
     return "enUS"

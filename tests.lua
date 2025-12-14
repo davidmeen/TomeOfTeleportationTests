@@ -130,6 +130,7 @@ dofile("layouttests.lua")
 dofile("interactiontests.lua")
 dofile("settingstests.lua")
 dofile("housetests.lua")
+dofile("searchtests.lua")
 
 local numSucceeded = 0
 local numFailed = 0
