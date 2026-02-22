@@ -4,6 +4,7 @@ dofile(AddonFolder .. "TeleporterSpell.lua")
 dofile(AddonFolder .. "TomeOfTeleportation.lua")
 dofile(AddonFolder .. "Spells.lua")
 dofile(AddonFolder .. "TomeQuickMenu.lua")
+dofile(AddonFolder .. "TeleporterSearch.lua")
 
 
 Item_Hearthstone = 6948
@@ -73,6 +74,20 @@ end
 function Fixture:TestNotEquals(v1, v2, text)
     if v1 == v2 then
         print(self.name .. " \"" .. text .. "\" failed. " .. tostring(v1) .. " equals " .. tostring(v2) .. ".")
+        self.result = false
+    end
+end
+
+function Fixture:TestTrue(v, text)
+    if not v then
+        print(self.name .. " \"" .. text .. "\" failed. " .. tostring(v) .. " is not true.")
+        self.result = false
+    end
+end
+
+function Fixture:TestFalse(v, text)
+    if v then
+        print(self.name .. " \"" .. text .. "\" failed. " .. tostring(v) .. " is not fakse.")
         self.result = false
     end
 end

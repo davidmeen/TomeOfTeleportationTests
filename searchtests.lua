@@ -5,6 +5,8 @@ local Item_CrusadersTabard = 46874
 local Spell_TeleportExodar = 32271
 local Item_RelicOfKarabor = 118663
 
+local Zone_Dalaran = 125
+
 local function AddSearchTestSpells()
     WowMock:AddSpell(Spell_TeleportDalaran, "Teleport: Dalaran")
     WowMock:AddItem(Item_BandOfTheKirinTor, "Band of the Kirin Tor")
@@ -16,6 +18,7 @@ end
 
 AddTests(
 {
+    -- UI tests
     ["MultipleSpellsKnown_SearchForName_OnlyShowSpellsWithName"]  = function(f)
         AddSearchTestSpells()
 
@@ -81,4 +84,22 @@ AddTests(
         f:TestEquals(ids[Item_JainasLocket], true, "Correct spells should be visible")
         f:TestEquals(ids[Item_CrusadersTabard], true, "Correct spells should be visible")
     end,
+
+
+    ------------------------------------------------------
+    -- TeleporterSearch class tests
+    ["TeleporterSearch_StringInName_Matches"] = function(f)
+        local spellID = 100
+        local spell = TeleporterCreateSpell(spellID, Zone_Dalaran)
+        spell.spellName = "Teleport: Dalaran"
+        local search = TeleporterSearch.Create("teleport")
+        f:TestTrue(search:MatchSpell(spell), "Spell should pass search")
+    end,
+    ["TeleporterSearch_StringNotInName_DoesNotMatchs"] = function(f)
+        local spellID = 100
+        local spell = TeleporterCreateSpell(spellID, Zone_Dalaran)
+        spell.spellName = "Teleport: Dalaran"
+        local search = TeleporterSearch.Create("portal")
+        f:TestFalse(search:MatchSpell(spell), "Spell should not pass search")
+    end
 })
