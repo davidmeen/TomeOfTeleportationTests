@@ -87,7 +87,7 @@ end
 
 function Fixture:TestFalse(v, text)
     if v then
-        print(self.name .. " \"" .. text .. "\" failed. " .. tostring(v) .. " is not fakse.")
+        print(self.name .. " \"" .. text .. "\" failed. " .. tostring(v) .. " is not false.")
         self.result = false
     end
 end
