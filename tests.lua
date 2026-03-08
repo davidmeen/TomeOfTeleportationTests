@@ -144,8 +144,7 @@ end
 dofile("layouttests.lua")
 dofile("interactiontests.lua")
 dofile("settingstests.lua")
--- House spells are currently disabled because of UI limitations.
---dofile("housetests.lua")
+dofile("housetests.lua")
 dofile("searchtests.lua")
 
 local numSucceeded = 0
