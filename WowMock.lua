@@ -588,6 +588,10 @@ end
 function Frame:ApplyBackdrop()
 end
 
+function Frame:SetBackdrop(backdropInfo)
+    self.backdropInfo = backdropInfo
+end
+
 function Frame:SetBackdropColor(r, g, b, a)
     self.backgroundR = r
     self.backgroundG = g
@@ -682,6 +686,10 @@ function GameFontNormalSmall:GetStringWidth()
     else
         return 0
     end
+end
+
+function GameFontNormalSmall:GetStringHeight()
+    return 10
 end
 
 function FontString:GetFont()
