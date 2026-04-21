@@ -449,4 +449,25 @@ AddTests(
         local search = TeleporterSearch.Create("(zone:Dalaran) and (zone:Orgrimmar) or (name:Teleport)")
         f:TestTrue(search:MatchSpell(spell), "Spell should pass search")
     end,
+
+    -- not (x) and not (y)
+    ["TeleporterSearchNotAndNot_NormalSpell_Matches"] = function(f)
+        local spellID = 100
+        local spell = TeleporterCreateSpell(spellID)
+        spell.spellName = "Teleport: Dalaran"
+        local search = TeleporterSearch.Create("not (type:dungeon) and not (type:raid)")
+        f:TestTrue(search:MatchSpell(spell), "Normal spell should pass not-dungeon and not-raid")
+    end,
+    ["TeleporterSearchNotAndNot_DungeonSpell_DoesNotMatch"] = function(f)
+        local spellID = 100
+        local spell = TeleporterCreateDungeonSpell(spellID, 0, 0)
+        local search = TeleporterSearch.Create("not (type:dungeon) and not (type:raid)")
+        f:TestFalse(search:MatchSpell(spell), "Dungeon spell should not pass not-dungeon and not-raid")
+    end,
+    ["TeleporterSearchNotAndNot_RaidSpell_DoesNotMatch"] = function(f)
+        local spellID = 100
+        local spell = TeleporterCreateRaidSpell(spellID, 0, 0)
+        local search = TeleporterSearch.Create("not (type:dungeon) and not (type:raid)")
+        f:TestFalse(search:MatchSpell(spell), "Raid spell should not pass not-dungeon and not-raid")
+    end,
 })
