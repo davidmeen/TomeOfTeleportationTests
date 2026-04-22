@@ -599,6 +599,9 @@ function Frame:SetBackdropColor(r, g, b, a)
     self.backgroundA = a
 end
 
+function Frame:SetBackdropBorderColor(r, g, b, a)
+end
+
 function Frame:GetBackdropColor()
     return self.backgroundR, self.backgroundG, self.backgroundB, self.backgroundA
 end
@@ -666,6 +669,7 @@ CreateFrame("Frame", "UIParent")
 CreateFrame("FontString", "FontString")
 CreateFrame("FontString", "GameFontNormalSmall", nil, "FontString")
 CreateFrame("FontString", "GameFontNormal", nil, "FontString")
+CreateFrame("FontString", "GameFontNormalTiny", nil, "FontString")
 CreateFrame("FontString", "SystemFont_Outline_Small", nil, "FontString")
 CreateFrame("Button", "UIPanelButtonTemplate")
 CreateFrame("Button", "InsecureActionButtonTemplate")
@@ -693,6 +697,15 @@ function GameFontNormalSmall:GetStringHeight()
 end
 
 function FontString:GetFont()
+end
+
+function FontString:SetWordWrap(wrap)
+end
+
+function FontString:SetTextColor(r, g, b, a)
+end
+
+function FontString:SetFont(fontFile, fontSize, flags)
 end
 
 -- Items
