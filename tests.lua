@@ -1,5 +1,6 @@
+local TestFolder = arg[0]:match("(.*[/\\])") or ""
 local AddonFolder = arg[1] or "C:/World of Warcraft/_retail_/Interface/Addons/TomeOfTeleportation/"
-dofile("WowMock.lua")
+dofile(TestFolder .. "WowMock.lua")
 dofile(AddonFolder .. "TeleporterSpell.lua")
 dofile(AddonFolder .. "TomeTabs.lua")
 dofile(AddonFolder .. "TomeOfTeleportation.lua")
@@ -142,11 +143,11 @@ function AddTests(tests)
     end
 end
 
-dofile("layouttests.lua")
-dofile("interactiontests.lua")
-dofile("settingstests.lua")
-dofile("housetests.lua")
-dofile("searchtests.lua")
+dofile(TestFolder .. "layouttests.lua")
+dofile(TestFolder .. "interactiontests.lua")
+dofile(TestFolder .. "settingstests.lua")
+dofile(TestFolder .. "housetests.lua")
+dofile(TestFolder .. "searchtests.lua")
 
 local numSucceeded = 0
 local numFailed = 0
