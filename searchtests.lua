@@ -254,6 +254,29 @@ AddTests(
         local search = TeleporterSearch.Create("type:raid")
         f:TestFalse(search:MatchSpell(spell), "Spell should not pass search")
     end,
+    ["TeleporterSearchFavourites_SpellIsFavourite_DoesMatch"] = function(f)
+        local spellID = 100
+        local spell = TeleporterCreateSpell(spellID)
+        local favourites = {}
+        favourites[spell:GetOptionId()] = true
+        TeleporterSetOption("favouritesTab", favourites)
+        local search = TeleporterSearch.Create("type:favourite")
+        f:TestTrue(search:MatchSpell(spell), "Spell should pass search")
+    end,
+    ["TeleporterSearchFavourites_SpellIsNotFavourite_DoesNotMatch"] = function(f)
+        local spellID = 100
+        TeleporterSetOption("favouritesTab", {})
+        local spell = TeleporterCreateSpell(spellID)
+        local search = TeleporterSearch.Create("type:favourite")
+        f:TestFalse(search:MatchSpell(spell), "Spell should not pass search")
+    end,
+    ["TeleporterSearchFavourites_FavouritesAreNil_DoesNotMatch"] = function(f)
+        local spellID = 100
+        TeleporterSetOption("favouritesTab", nil)
+        local spell = TeleporterCreateSpell(spellID)
+        local search = TeleporterSearch.Create("type:favourite")
+        f:TestFalse(search:MatchSpell(spell), "Spell should not pass search")
+    end,
 
     -- Ops
 
