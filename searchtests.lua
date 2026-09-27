@@ -92,7 +92,7 @@ AddTests(
     -- Simple search
     ["TeleporterSearch_StringInName_Matches"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("teleport")
@@ -100,7 +100,7 @@ AddTests(
     end,
     ["TeleporterSearch_StringNotInName_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("portal")
@@ -110,7 +110,7 @@ AddTests(
     -- Search name
     ["TeleporterSearchName_StringInName_Matches"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("name:teleport")
@@ -118,7 +118,7 @@ AddTests(
     end,
     ["TeleporterSearchName_StringNotInName_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("name:portal")
@@ -126,7 +126,7 @@ AddTests(
     end,
     ["TeleporterSearchName_StringInZoneButNotInName_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Ruby Slippers"
         local search = TeleporterSearch.Create("name:dalaran")
@@ -136,7 +136,7 @@ AddTests(
     -- Search zone
     ["TeleporterSearchZone_StringInZone_Matches"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Ruby Slippers"
         local search = TeleporterSearch.Create("zone:Dalaran")
@@ -144,7 +144,7 @@ AddTests(
     end,
     ["TeleporterSearchZone_StringNotInZone_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Ruby Slippers"
         local search = TeleporterSearch.Create("zone:Orgrimmar")
@@ -152,7 +152,7 @@ AddTests(
     end,
     ["TeleporterSearchName_StringInNameButNotInZone_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Orgrimmar", Zone_Orgrimmar)
         spell.spellName = "Teleport: Not Dalaran"
         local search = TeleporterSearch.Create("zone:dalaran")
@@ -160,7 +160,7 @@ AddTests(
     end,
     ["TeleporterSearchZone_StringInParentZone_Matches"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Ruby Slippers"
         local search = TeleporterSearch.Create("zone:Northrend")
@@ -170,7 +170,7 @@ AddTests(
     -- Search expansion
     ["TeleporterSearchExpansion_StringInExpansion_Matches"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Ruby Slippers"
         spell.expansion = 7
@@ -179,7 +179,7 @@ AddTests(
     end,
     ["TeleporterSearchExpansion_StringNotInExpansion_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Ruby Slippers"
         spell.expansion = 7
@@ -190,7 +190,7 @@ AddTests(
     -- Search dungeon
     ["TeleporterSearchDungeon_StringInDungeon_Matches"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell.spellName = "Path of the Stormwind Dungeon"
         spell.dungeon = "Stormwind Stockades"
         local search = TeleporterSearch.Create("dungeon:Stockades")
@@ -198,7 +198,7 @@ AddTests(
     end,
     ["TeleporterSearchDungeon_StringNotInDungeon_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell.spellName = "Path of the Stormwind Dungeon"
         spell.dungeon = "Stormwind Stockades"
         local search = TeleporterSearch.Create("dungeon:Ragefire")
@@ -208,72 +208,72 @@ AddTests(
     -- Search type
     ["TeleporterSearchType_SearchSpellForSpell_Matches"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         local search = TeleporterSearch.Create("type:spell")
         f:TestTrue(search:MatchSpell(spell), "Spell should pass search")
     end,
     ["TeleporterSearchType_SearchItemForSpell_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateItem(spellID)
+        local spell = TomeOfTeleportation.CreateItem(spellID)
         local search = TeleporterSearch.Create("type:spell")
         f:TestFalse(search:MatchSpell(spell), "Spell should not pass search")
     end,
     ["TeleporterSearchType_SearchItemForItem_Matches"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateItem(spellID)
+        local spell = TomeOfTeleportation.CreateItem(spellID)
         local search = TeleporterSearch.Create("type:item")
         f:TestTrue(search:MatchSpell(spell), "Spell should pass search")
     end,
     ["TeleporterSearchType_SearchSpellForItem_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         local search = TeleporterSearch.Create("type:item")
         f:TestFalse(search:MatchSpell(spell), "Spell should not pass search")
     end,
     ["TeleporterSearchType_SearchDungeonForDungeon_Matches"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateDungeonSpell(spellID, 0, 0)
+        local spell = TomeOfTeleportation.CreateDungeonSpell(spellID, 0, 0)
         local search = TeleporterSearch.Create("type:dungeon")
         f:TestTrue(search:MatchSpell(spell), "Spell should pass search")
     end,
     ["TeleporterSearchType_SearchNormalSpellForDungeon_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         local search = TeleporterSearch.Create("type:dungeon")
         f:TestFalse(search:MatchSpell(spell), "Spell should not pass search")
     end,
     ["TeleporterSearchType_SearchRaidForRaid_Matches"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateRaidSpell(spellID, 0, 0)
+        local spell = TomeOfTeleportation.CreateRaidSpell(spellID, 0, 0)
         local search = TeleporterSearch.Create("type:raid")
         f:TestTrue(search:MatchSpell(spell), "Spell should pass search")
     end,
     ["TeleporterSearchType_SearchNormalSpellForRaid_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         local search = TeleporterSearch.Create("type:raid")
         f:TestFalse(search:MatchSpell(spell), "Spell should not pass search")
     end,
     ["TeleporterSearchFavourites_SpellIsFavourite_DoesMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         local favourites = {}
         favourites[spell:GetOptionId()] = true
-        TeleporterSetOption("favouritesTab", favourites)
+        TT.SetOption("favouritesTab", favourites)
         local search = TeleporterSearch.Create("type:favourite")
         f:TestTrue(search:MatchSpell(spell), "Spell should pass search")
     end,
     ["TeleporterSearchFavourites_SpellIsNotFavourite_DoesNotMatch"] = function(f)
         local spellID = 100
-        TeleporterSetOption("favouritesTab", {})
-        local spell = TeleporterCreateSpell(spellID)
+        TT.SetOption("favouritesTab", {})
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         local search = TeleporterSearch.Create("type:favourite")
         f:TestFalse(search:MatchSpell(spell), "Spell should not pass search")
     end,
     ["TeleporterSearchFavourites_FavouritesAreNil_DoesNotMatch"] = function(f)
         local spellID = 100
-        TeleporterSetOption("favouritesTab", nil)
-        local spell = TeleporterCreateSpell(spellID)
+        TT.SetOption("favouritesTab", nil)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         local search = TeleporterSearch.Create("type:favourite")
         f:TestFalse(search:MatchSpell(spell), "Spell should not pass search")
     end,
@@ -283,7 +283,7 @@ AddTests(
     -- Not
     ["TeleporterSearchNot_SearchNameInString_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("not (Teleport)")
@@ -291,7 +291,7 @@ AddTests(
     end,
     ["TeleporterSearchNot_SearchNameNotInString_DoesMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("not (Teleaport)")
@@ -299,13 +299,13 @@ AddTests(
     end,
     ["TeleporterSearchNot_SearchCorrectType_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateItem(spellID)
+        local spell = TomeOfTeleportation.CreateItem(spellID)
         local search = TeleporterSearch.Create("not (type:item)")
         f:TestFalse(search:MatchSpell(spell), "Spell should not pass search")
     end,
     ["TeleporterSearchNot_SearchIncorrectType_DoesMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateItem(spellID)
+        local spell = TomeOfTeleportation.CreateItem(spellID)
         local search = TeleporterSearch.Create("not (type:spell)")
         f:TestTrue(search:MatchSpell(spell), "Spell should pass search")
     end,
@@ -313,7 +313,7 @@ AddTests(
     -- Or
     ["TeleporterSearchOr_SearchNameInFirstString_DoesMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Dalaran) or (Silvermoon)")
@@ -321,7 +321,7 @@ AddTests(
     end,
     ["TeleporterSearchOr_SearchNameInSecondString_DoesMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Silvermoon) or (Dalaran)")
@@ -329,7 +329,7 @@ AddTests(
     end,
     ["TeleporterSearchOr_SearchNameInBothStrings_DoesMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Teleport) or (Dalaran)")
@@ -337,7 +337,7 @@ AddTests(
     end,
     ["TeleporterSearchOr_SearchNameInNeitherString_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Silvermoon) or (Orgrimmar)")
@@ -347,7 +347,7 @@ AddTests(
     -- And
     ["TeleporterSearchAnd_SearchNameInFirstString_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Dalaran) and (Silvermoon)")
@@ -355,7 +355,7 @@ AddTests(
     end,
     ["TeleporterSearchOr_SearchNameInSecondString_DoesMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Silvermoon) and (Dalaran)")
@@ -363,7 +363,7 @@ AddTests(
     end,
     ["TeleporterSearchOr_SearchNameInBothStrings_DoesMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Teleport) and (Dalaran)")
@@ -371,7 +371,7 @@ AddTests(
     end,
     ["TeleporterSearchOr_SearchNameInNeitherString_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Silvermoon) and (Orgrimmar)")
@@ -381,7 +381,7 @@ AddTests(
     -- Or Not
     ["TeleporterSearchOrNot_SearchNameInFirstString_DoesMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Dalaran) or not (Silvermoon)")
@@ -389,7 +389,7 @@ AddTests(
     end,
     ["TeleporterSearchOr_SearchNameInSecondString_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Silvermoon) or not (Dalaran)")
@@ -397,7 +397,7 @@ AddTests(
     end,
     ["TeleporterSearchOr_SearchNameInBothStrings_DoesMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Teleport) or not (Dalaran)")
@@ -405,7 +405,7 @@ AddTests(
     end,
     ["TeleporterSearchOr_SearchNameInNeitherString_DoesMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Silvermoon) or not (Orgrimmar)")
@@ -415,7 +415,7 @@ AddTests(
     -- And Not
     ["TeleporterSearchAndNot_SearchNameInFirstString_DoesMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Dalaran) and not (Silvermoon)")
@@ -423,7 +423,7 @@ AddTests(
     end,
     ["TeleporterSearchAndNot_SearchNameInSecondString_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Silvermoon) and not (Dalaran)")
@@ -431,7 +431,7 @@ AddTests(
     end,
     ["TeleporterSearcAndNot_SearchNameInBothStrings_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Teleport) and not (Dalaran)")
@@ -439,7 +439,7 @@ AddTests(
     end,
     ["TeleporterSearchAndNot_SearchNameInNeitherString_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(Silvermoon) and not (Orgrimmar)")
@@ -449,7 +449,7 @@ AddTests(
     -- Parantheses
     ["TeleporterSearchAndOr_SearchWithParanthesesOnLeft_DoesMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("((zone:Dalaran) and (zone:Orgrimmar)) or (name:Teleport)")
@@ -457,7 +457,7 @@ AddTests(
     end,
     ["TeleporterSearchAndOr_SearchWithParanthesesOnRight_DoesMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("(zone:Dalaran) and ((zone:Orgrimmar) or (name:Teleport))")
@@ -465,7 +465,7 @@ AddTests(
     end,
     ["TeleporterSearchAndOr_SearchWithParanthesesOnLeft_DoesMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell:SetZone("Dalaran", Zone_Dalaran)
         spell.spellName = "Teleport: Dalaran"
         -- Left to right ordering, so this should be equivalent to ((zone:Dalaran) and (zone:Orgrimmar)) or (name:Teleport)
@@ -476,20 +476,20 @@ AddTests(
     -- not (x) and not (y)
     ["TeleporterSearchNotAndNot_NormalSpell_Matches"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateSpell(spellID)
+        local spell = TomeOfTeleportation.CreateSpell(spellID)
         spell.spellName = "Teleport: Dalaran"
         local search = TeleporterSearch.Create("not (type:dungeon) and not (type:raid)")
         f:TestTrue(search:MatchSpell(spell), "Normal spell should pass not-dungeon and not-raid")
     end,
     ["TeleporterSearchNotAndNot_DungeonSpell_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateDungeonSpell(spellID, 0, 0)
+        local spell = TomeOfTeleportation.CreateDungeonSpell(spellID, 0, 0)
         local search = TeleporterSearch.Create("not (type:dungeon) and not (type:raid)")
         f:TestFalse(search:MatchSpell(spell), "Dungeon spell should not pass not-dungeon and not-raid")
     end,
     ["TeleporterSearchNotAndNot_RaidSpell_DoesNotMatch"] = function(f)
         local spellID = 100
-        local spell = TeleporterCreateRaidSpell(spellID, 0, 0)
+        local spell = TomeOfTeleportation.CreateRaidSpell(spellID, 0, 0)
         local search = TeleporterSearch.Create("not (type:dungeon) and not (type:raid)")
         f:TestFalse(search:MatchSpell(spell), "Raid spell should not pass not-dungeon and not-raid")
     end,

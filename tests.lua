@@ -1,6 +1,7 @@
 local TestFolder = arg[0]:match("(.*[/\\])") or ""
 local AddonFolder = arg[1] or "C:/World of Warcraft/_retail_/Interface/Addons/TomeOfTeleportation/"
 dofile(TestFolder .. "WowMock.lua")
+dofile(AddonFolder .. "TeleporterUtils.lua")
 dofile(AddonFolder .. "TeleporterSpell.lua")
 dofile(AddonFolder .. "TomeTabs.lua")
 dofile(AddonFolder .. "TomeOfTeleportation.lua")
@@ -106,9 +107,9 @@ function Fixture:TestEqualsKnownFailure(v1, v2, text)
 end
 
 function Fixture:TestButtonColour(button, colourSetting, message)
-    local settingR = TeleporterGetOption(colourSetting .. "R")
-    local settingG = TeleporterGetOption(colourSetting .. "G")
-    local settingB = TeleporterGetOption(colourSetting .. "B")
+    local settingR = TT.GetOption(colourSetting .. "R")
+    local settingG = TT.GetOption(colourSetting .. "G")
+    local settingB = TT.GetOption(colourSetting .. "B")
 
     local buttonR, buttonG, buttonB = button.frame.backdrop:GetBackdropColor()
 

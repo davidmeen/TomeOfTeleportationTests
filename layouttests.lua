@@ -95,7 +95,7 @@ AddTests(
 
         TeleporterOpenFrame()
 
-        local hiddenLength = TeleporterGetOption("cooldownBarInset") * 2
+        local hiddenLength = TT.GetOption("cooldownBarInset") * 2
         local hearthCooldownLength = TT.GetButtonSettingsFromItemId(Item_Hearthstone).cooldownbar:GetWidth() - hiddenLength
         local tomeCooldownLength = TT.GetButtonSettingsFromItemId(Toy_TomeOfTownPortal).cooldownbar:GetWidth() - hiddenLength
         f:TestEquals(hearthCooldownLength / 2, tomeCooldownLength, "Cooldown bar should be proportional to time remaining")
@@ -113,7 +113,7 @@ AddTests(
 
         TeleporterOpenFrame()
 
-        local hiddenLength = TeleporterGetOption("cooldownBarInset") * 2
+        local hiddenLength = TT.GetOption("cooldownBarInset") * 2
         local hearthCooldownLength = TT.GetButtonSettingsFromItemId(Item_Hearthstone).cooldownbar:GetWidth() - hiddenLength
         local tomeCooldownLength = TT.GetButtonSettingsFromItemId(Toy_TomeOfTownPortal).cooldownbar:GetWidth() - hiddenLength
         f:TestEquals(hearthCooldownLength, tomeCooldownLength / 2, "Cooldown bar should be proportional to time remaining")
@@ -127,7 +127,7 @@ AddTests(
 
         TeleporterOpenFrame()
 
-        local hiddenLength = TeleporterGetOption("cooldownBarInset") * 2
+        local hiddenLength = TT.GetOption("cooldownBarInset") * 2
         local hearthCooldownLength = TT.GetButtonSettingsFromItemId(Item_Hearthstone).cooldownbar:GetWidth() - hiddenLength
         f:TestEquals(hearthCooldownLength, 0, "Cooldown bar should be hidden")
     end,

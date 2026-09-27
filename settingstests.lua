@@ -496,7 +496,7 @@ AddTests(
     end,
     ["SpellIsHidden_OpenFrame_HasNoButtonForSpell"] = function(f)
         WowMock:AddSpell(Spell_AstralRecall, "Astral Recall")
-        local spell = TeleporterCreateItem(Spell_AstralRecall, Zone_AstralRecall)
+        local spell = TomeOfTeleportation.CreateItem(Spell_AstralRecall, Zone_AstralRecall)
 
         spell:SetHidden()
         TeleporterOpenFrame()
@@ -505,7 +505,7 @@ AddTests(
     end,
     ["SpellIsHiddenThenVisible_OpenFrame_HasButtonForSpell"] = function(f)
         WowMock:AddSpell(Spell_AstralRecall, "Astral Recall")
-        local spell = TeleporterCreateItem(Spell_AstralRecall, Zone_AstralRecall)
+        local spell = TomeOfTeleportation.CreateItem(Spell_AstralRecall, Zone_AstralRecall)
 
         spell:SetHidden()
         spell:SetVisible()
@@ -514,7 +514,7 @@ AddTests(
         f:TestEquals(#TT.GetButtonSettings(), 1, "There should be a button")
     end,
     ["SpellIsNotKnownAndAlwaysVisible_OpenFrame_HasButtonForSpell"] = function(f)
-        local spell = TeleporterCreateItem(Spell_AstralRecall, Zone_AstralRecall)
+        local spell = TomeOfTeleportation.CreateItem(Spell_AstralRecall, Zone_AstralRecall)
 
         spell:SetAlwaysVisible()
         TeleporterOpenFrame()
@@ -522,7 +522,7 @@ AddTests(
         f:TestEquals(#TT.GetButtonSettings(), 1, "There should be a button")
     end,
     ["SpellIsNotKnownAndAlwaysVisibleThenJustVisible_OpenFrame_HasNoButtonForSpell"] = function(f)
-        local spell = TeleporterCreateItem(Spell_AstralRecall, Zone_AstralRecall)
+        local spell = TomeOfTeleportation.CreateItem(Spell_AstralRecall, Zone_AstralRecall)
 
         spell:SetAlwaysVisible()
         spell:SetVisible()
@@ -536,7 +536,7 @@ AddTests(
         WowMock:AddSpell(Spell_TeleportOrgrimmar)
         WowMock:AddItem(Item_WormholeGeneratorZandalar)
 
-        TeleporterSetOption("sort", 1)
+        TT.SetOption("sort", 1)
 
         TeleporterOpenFrame()
 
@@ -551,7 +551,7 @@ AddTests(
         WowMock:AddSpell(Spell_TeleportOrgrimmar)
         WowMock:AddItem(Item_WormholeGeneratorZandalar)
 
-        TeleporterSetOption("sort", 2)
+        TT.SetOption("sort", 2)
 
         TeleporterOpenFrame()
 
@@ -566,7 +566,7 @@ AddTests(
         WowMock:AddSpell(Spell_TeleportOrgrimmar)
         WowMock:AddItem(Item_WormholeGeneratorZandalar)
 
-        TeleporterSetOption("sort", 3)
+        TT.SetOption("sort", 3)
 
         TeleporterOpenFrame()
 
@@ -581,12 +581,12 @@ AddTests(
         WowMock:AddSpell(Spell_TeleportOrgrimmar)
         WowMock:AddItem(Item_WormholeGeneratorZandalar)
 
-        TeleporterSetOption("sort", 3)
-        TeleporterResetSort()
+        TT.SetOption("sort", 3)
+        TT.ResetSort()
 
-        local WormholeSpell = TeleporterCreateItem(Item_WormholeGeneratorZandalar, "Zandalar")
-        local CampSpell = TeleporterCreateSpell(Spell_Camp, "Camp")
-        TeleporterMoveSpellBefore(WormholeSpell, CampSpell)
+        local WormholeSpell = TomeOfTeleportation.CreateItem(Item_WormholeGeneratorZandalar, "Zandalar")
+        local CampSpell = TomeOfTeleportation.CreateSpell(Spell_Camp, "Camp")
+        TT.MoveSpellBefore(WormholeSpell, CampSpell)
 
         TeleporterOpenFrame()
 
@@ -601,12 +601,12 @@ AddTests(
         WowMock:AddSpell(Spell_TeleportOrgrimmar)
         WowMock:AddItem(Item_WormholeGeneratorZandalar)
 
-        TeleporterSetOption("sort", 3)
-        TeleporterResetSort()
+        TT.SetOption("sort", 3)
+        TT.ResetSort()
 
-        local OgrimmarSpell = TeleporterCreateSpell(Spell_TeleportOrgrimmar, "Orgrimmar")
-        local CampSpell = TeleporterCreateSpell(Spell_Camp, "Camp")
-        TeleporterMoveSpellAfter(CampSpell, OgrimmarSpell)
+        local OgrimmarSpell = TomeOfTeleportation.CreateSpell(Spell_TeleportOrgrimmar, "Orgrimmar")
+        local CampSpell = TomeOfTeleportation.CreateSpell(Spell_Camp, "Camp")
+        TT.MoveSpellAfter(CampSpell, OgrimmarSpell)
 
         TeleporterOpenFrame()
 
@@ -620,7 +620,7 @@ AddTests(
 
         local NewZoneName = "Home"
 
-        local spell = TeleporterCreateSpell(Spell_TeleportOrgrimmar, CloakDestination)
+        local spell = TomeOfTeleportation.CreateSpell(Spell_TeleportOrgrimmar, CloakDestination)
 
         spell:OverrideZoneName(NewZoneName)
 
@@ -633,7 +633,7 @@ AddTests(
 
         local NewZoneName = "Kyrian Home"
 
-        local spell = TeleporterCreateSpell(Spell_TeleportOrgrimmar, CloakDestination)
+        local spell = TomeOfTeleportation.CreateSpell(Spell_TeleportOrgrimmar, CloakDestination)
 
         spell:OverrideZoneName(NewZoneName)
         spell:OverrideZoneName("")
@@ -646,7 +646,7 @@ AddTests(
         WowMock:AddItem(Item_ShroudOfCooperation)
         WowMock:AddItem(Item_CloakOfCoordination)
 
-        local item = TeleporterCreateItem(Item_ShroudOfCooperation, CloakDestination)
+        local item = TomeOfTeleportation.CreateItem(Item_ShroudOfCooperation, CloakDestination)
         item:OverrideZoneName("Home")
 
         TeleporterOpenFrame()
@@ -656,7 +656,7 @@ AddTests(
         WowMock:AddItem(Item_ShroudOfCooperation)
         WowMock:AddItem(Item_CloakOfCoordination)
 
-        local item = TeleporterCreateItem(Item_NightFaeHearthstone, CloakDestination)
+        local item = TomeOfTeleportation.CreateItem(Item_NightFaeHearthstone, CloakDestination)
         item:OverrideZoneName("Home")
         item:OverrideZoneName("")
 
@@ -681,9 +681,9 @@ AddTests(
             ["spellName"] = "Critter Hand Cannon",
             }
         }
-        TeleporterSetOption("extraSpellsAndItems", extraSpellsAndItems)
+        TT.SetOption("extraSpellsAndItems", extraSpellsAndItems)
 
-        TeleporterRebuildSpellList()
+        TT.RebuildSpellList()
         TeleporterOpenFrame()
 
         f:TestEquals(#f:FindButtons(), 1, "There should be 1 button")
@@ -717,9 +717,9 @@ AddTests(
                 ["spellName"] = "Critter Hand Cannon",
              }
          }
-         TeleporterSetOption("extraSpellsAndItems", extraSpellsAndItems)
+         TT.SetOption("extraSpellsAndItems", extraSpellsAndItems)
 
-         TeleporterRebuildSpellList()
+         TT.RebuildSpellList()
          TeleporterOpenFrame()
 
          f:TestEquals(#f:FindButtons(), 2, "There should be 2 buttons")
@@ -747,9 +747,9 @@ AddTests(
                 ["spellName"] = "Critter Hand Cannon",
             }
          }
-         TeleporterSetOption("extraSpellsAndItems", extraSpellsAndItems)
+         TT.SetOption("extraSpellsAndItems", extraSpellsAndItems)
 
-         TeleporterRebuildSpellList()
+         TT.RebuildSpellList()
          TeleporterOpenFrame()
 
          f:TestEquals(#f:FindButtons(), 2, "There should be 2 buttons")
