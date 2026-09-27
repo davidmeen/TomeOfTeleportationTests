@@ -1,16 +1,16 @@
 AddTests(
-{    
+{
     ["ItemIsEquippable_EquipItemWhileFrameIsOpen_ButtonColourChanges"] = function(f)
         WowMock:AddItem(Item_Atiesh)
         WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
         TeleporterOpenFrame()
 
-        f:TestButtonColour(TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh), "unequipedColour", "Button should have the unequipped colour")
+        f:TestButtonColour(TT.GetButtonSettingsFromItemId(Item_Atiesh), "unequipedColour", "Button should have the unequipped colour")
 
         WowMock:EquipItem(Item_Atiesh)
         WowMock:Tick(1)
 
-        f:TestButtonColour(TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh), "readyColour", "Button should have the ready colour")
+        f:TestButtonColour(TT.GetButtonSettingsFromItemId(Item_Atiesh), "readyColour", "Button should have the ready colour")
 
     end,
     ["SpellIsOnCooldown_GoesOffCooldown_ButtonColourChanges"] = function(f)
@@ -19,16 +19,16 @@ AddTests(
 
         TeleporterOpenFrame()
 
-        f:TestButtonColour(TeleporterTest_GetButtonSettingsFromItemId(Item_Hearthstone), "cooldownColour", "Button should have the cooldown colour")
+        f:TestButtonColour(TT.GetButtonSettingsFromItemId(Item_Hearthstone), "cooldownColour", "Button should have the cooldown colour")
 
         WowMock:Tick(1)
 
-        f:TestButtonColour(TeleporterTest_GetButtonSettingsFromItemId(Item_Hearthstone), "readyColour", "Button should have the ready colour")
-        
+        f:TestButtonColour(TT.GetButtonSettingsFromItemId(Item_Hearthstone), "readyColour", "Button should have the ready colour")
+
     end,
     ["HaveItem_ClickButton_ItemIsUsedAndClosesFrame"] = function(f)
         WowMock:AddItem(Item_Hearthstone)
-        
+
         TeleporterOpenFrame()
 
         WowMock:ClickFrame(f:FindButtons()[1])
@@ -37,7 +37,7 @@ AddTests(
     end,
     ["HaveItem_ClickButtonAndTimePasses_FrameIsClosed"] = function(f)
         WowMock:AddItem(Item_Hearthstone)
-        
+
         TeleporterOpenFrame()
 
         WowMock:ClickFrame(f:FindButtons()[1])
@@ -46,7 +46,7 @@ AddTests(
     end,
     ["HaveSpell_ClickButton_SpellIsUsed"] = function(f)
         WowMock:AddSpell(Spell_AstralRecall)
-        
+
         TeleporterOpenFrame()
 
         WowMock:ClickFrame(f:FindButtons()[1])
@@ -55,17 +55,17 @@ AddTests(
     end,
     ["HaveSpell_ClickButtonAndTimePasses_FrameIsClosed"] = function(f)
         WowMock:AddSpell(Spell_AstralRecall)
-        
+
         TeleporterOpenFrame()
 
         WowMock:ClickFrame(f:FindButtons()[1])
 
         f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")
-        WowMock:Tick(1)        
+        WowMock:Tick(1)
     end,
     ["HaveToy_ClickButton_ToyIsUsed"] = function(f)
         WowMock:AddToy(Toy_TomeOfTownPortal)
-        
+
         TeleporterOpenFrame()
 
         WowMock:ClickFrame(f:FindButtons()[1])
@@ -74,18 +74,18 @@ AddTests(
     end,
     ["HaveToy_ClickButtonAndTimePasses_FrameIsClosed"] = function(f)
         WowMock:AddToy(Toy_TomeOfTownPortal)
-        
+
         TeleporterOpenFrame()
 
         WowMock:ClickFrame(f:FindButtons()[1])
 
         f:TestEquals(TeleporterFrame:IsVisible(), false, "Frame should have closed")
-        WowMock:Tick(1)        
+        WowMock:Tick(1)
     end,
     ["HaveEquipableItemUnequiped_ClickButton_ItemIsEquiped"] = function(f)
         WowMock:AddItem(Item_Atiesh)
         WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
-        
+
         TeleporterOpenFrame()
 
         WowMock:ClickFrame(f:FindButtons()[1])
@@ -97,7 +97,7 @@ AddTests(
         WowMock:AddItem(Item_Atiesh)
         WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
         WowMock:SetEquipped(Item_Atiesh)
-        
+
         TeleporterOpenFrame()
 
         WowMock:ClickFrame(f:FindButtons()[1])
@@ -106,19 +106,19 @@ AddTests(
         f:TestEquals(WowMock:IsUsingItem(Item_Atiesh), true, "Should be using Atiesh")
     end,
     ["HaveEquipableItemUnequiped_ClickButtonTwice_ItemIsUsedAndClosesFrameAndUnequips"] = function(f)
-        
+
         WowMock:AddItem(Item_Atiesh)
         WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
-        
+
         f:TestEquals(IsEquippedItem(Item_Atiesh), false, "Should not have equipped Atiesh")
-        
+
         TeleporterOpenFrame()
-        
+
         WowMock:ClickFrame(f:FindButtons()[1])
         f:TestEquals(WowMock:IsUsingItem(Item_Atiesh), false, "Should not be using Atiesh")
         WowMock:Tick(1)
-        
-        WowMock:ClickFrame(f:FindButtons()[1])        
+
+        WowMock:ClickFrame(f:FindButtons()[1])
         f:TestEquals(WowMock:IsUsingItem(Item_Atiesh), true, "Should be using Atiesh")
 
         WowMock:Tick(1)
@@ -140,9 +140,9 @@ AddTests(
         WowMock:AddItem(Item_Atiesh, BagIndex)
         WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
         f:TestEquals(WowMock:BagContains(Item_Atiesh, BagIndex), true, "Atiesh should be in bag 2")
-                
+
         TeleporterOpenFrame()
-        
+
         WowMock:ClickFrame(f:FindButtons()[1])
         f:TestEquals(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
         f:TestEquals(IsEquippedItem(Item_MainHand), false, "Should have unequipped main hand")
@@ -151,8 +151,8 @@ AddTests(
         f:TestEquals(WowMock:BagContains(Item_MainHand, 0), true, "Main hand should have been placed in a bag")
         f:TestEquals(WowMock:BagContains(Item_OffHand, 0), true, "Off hand should have been placed in a bag")
         WowMock:Tick(1)
-        
-        TeleporterClose()  
+
+        TeleporterClose()
         f:TestEquals(IsEquippedItem(Item_Atiesh), false, "Should have unequipped Atiesh")
         f:TestEquals(IsEquippedItem(Item_MainHand), true, "Should have equipped main hand")
         f:TestEquals(IsEquippedItem(Item_OffHand), true, "Should have equipped off hand")
@@ -163,9 +163,9 @@ AddTests(
         WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
 
         TeleporterOpenFrame()
-        
+
         WowMock:Tick(1)
-        local atieshButton = TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh)
+        local atieshButton = TT.GetButtonSettingsFromItemId(Item_Atiesh)
         WowMock:ClickFrame(atieshButton.frame)
         f:TestEquals(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
         WowMock:Tick(1)
@@ -178,9 +178,9 @@ AddTests(
         WowMock:SetItemLoaded(Item_DarkPortal, false)
 
         TeleporterOpenFrame()
-        
+
         WowMock:Tick(1)
-        local atieshButton = TeleporterTest_GetButtonSettingsFromItemId(Item_Atiesh)
+        local atieshButton = TT.GetButtonSettingsFromItemId(Item_Atiesh)
         WowMock:ClickFrame(atieshButton.frame)
         f:TestEquals(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
         WowMock:Tick(1)
@@ -191,13 +191,13 @@ AddTests(
         WowMock:AddItem(Item_Atiesh, BagIndex)
         WowMock:SetEquippable(Item_Atiesh, "INVTYPE_2HWEAPON")
         f:TestEquals(WowMock:BagContains(Item_Atiesh, BagIndex), true, "Atiesh should be in bag 2")
-                
+
         TeleporterOpenFrame()
-        
+
         WowMock:ClickFrame(f:FindButtons()[1])
         f:TestEquals(IsEquippedItem(Item_Atiesh), true, "Should have equipped Atiesh")
-                
-        TeleporterClose()  
+
+        TeleporterClose()
         f:TestEquals(IsEquippedItem(Item_Atiesh), false, "Should have unequipped Atiesh")
         f:TestEquals(WowMock:BagContains(Item_Atiesh, BagIndex), true, "Atiesh should have been placed back in its original bag")
     end,

@@ -8,6 +8,8 @@ dofile(AddonFolder .. "Spells.lua")
 dofile(AddonFolder .. "TomeQuickMenu.lua")
 dofile(AddonFolder .. "TeleporterSearch.lua")
 
+TT = TomeOfTeleportation
+
 
 Item_Hearthstone = 6948
 Item_Atiesh = 22589
@@ -32,7 +34,7 @@ Spell_Camp = 312372
 Fixture = {}
 
 function Fixture:BeforeTest()
-    TeleporterTest_Reset()
+    TT.Reset()
     CreateFrame("Frame", "TeleporterFrame")
     Teleporter_OnAddonLoaded()
     Teleporter_OnLoad()
